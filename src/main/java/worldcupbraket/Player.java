@@ -1,0 +1,48 @@
+package worldcupbraket;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Player {
+    String name;
+    int points;
+    private final Map<Integer, Prediction> predictions;
+
+    public Player(String name) {
+        this.name = name;
+        this.points = 0;
+        this.predictions = new HashMap<>();
+    }
+
+    public void predict(int matchIndex, Prediction prediction) {
+        predictions.put(matchIndex, prediction);
+    }
+
+    public void gradeMatch(int matchIndex, Result result) {
+        if (predictions.containsKey(matchIndex)) {
+            Prediction prediction = predictions.get(matchIndex);
+            points += calculatePoints(prediction, result);        }
+    }
+
+    private int calculatePoints(Prediction prediction, Result result) {
+        int correctWinner = calculatePointsForWinner(prediction, result);
+        int correctScore1 = prediction.Score1() == result.Score1() ? 1 : 0;
+        int correctScore2 = prediction.Score2() == result.Score2() ? 1 : 0;
+        int correctDiff =
+                Math.abs(prediction.Score1() - prediction.Score2())
+                == Math.abs(result.Score1() - result.Score2())
+                && correctWinner != 0
+                ? 3 : 0;
+        return correctWinner + correctScore1 + correctScore2 + correctDiff;
+    }
+
+    private int calculatePointsForWinner(Prediction prediction, Result result) {
+        boolean team1Won = prediction.Score1() > prediction.Score2()
+                && result.Score1() > result.Score2();
+        boolean team2Won = prediction.Score1() < prediction.Score2()
+                && result.Score1() < result.Score2();
+        boolean draw = prediction.Score1() == prediction.Score2()
+                && result.Score1() == result.Score2();
+        return team1Won ? 5 : team2Won ? 5 : draw ? 5 : 0;
+    }
+}
