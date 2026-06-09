@@ -6,7 +6,7 @@ import java.util.Map;
 public class Player {
     String name;
     int points;
-    private final Map<Integer, Prediction> predictions;
+    private final Map<Match, Prediction> predictions;
 
     public Player(String name) {
         this.name = name;
@@ -14,13 +14,17 @@ public class Player {
         this.predictions = new HashMap<>();
     }
 
-    public void predict(int matchIndex, Prediction prediction) {
-        predictions.put(matchIndex, prediction);
+    public int getPoints() {
+        return points;
     }
 
-    public void gradeMatch(int matchIndex, Result result) {
-        if (predictions.containsKey(matchIndex)) {
-            Prediction prediction = predictions.get(matchIndex);
+    public void predict(Prediction prediction) {
+        predictions.put(prediction.Match(), prediction);
+    }
+
+    public void gradeMatch(Result result) {
+        if (predictions.containsKey(result.Match())) {
+            Prediction prediction = predictions.get(result.Match());
             points += calculatePoints(prediction, result);        }
     }
 
