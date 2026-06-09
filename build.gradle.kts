@@ -22,6 +22,9 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.xerial:sqlite-jdbc:3.46.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.hibernate.orm:hibernate-community-dialects")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat-runtime")
     testImplementation("org.springframework.boot:spring-boot-starter-thymeleaf-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")

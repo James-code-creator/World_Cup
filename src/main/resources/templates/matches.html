@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${nameOfApplication}">Matches</title>
+</head>
+<body>
+  <h1>Matches</h1>
+  <tr th:each="match : ${matches}">
+    <td th:text="${match.round}"></td>
+    <td th:text="${match.team1}"></td>
+    <td th:text="${match.team2}"></td>
+  </tr>   
+  
+</body>
+</html>

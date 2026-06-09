@@ -1,3 +1,5 @@
 spring:
   application:
     name: world-cup-braket
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect

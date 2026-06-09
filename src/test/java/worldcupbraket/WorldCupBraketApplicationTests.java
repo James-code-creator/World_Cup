@@ -1,6 +1,7 @@
 package worldcupbraket;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 import java.util.List;
@@ -87,5 +88,20 @@ class WorldCupBraketApplicationTests {
                     "Player points are not correct"
             );
         }
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void testDatabase() {
+        User user = new User("mac gillen", "password123");
+        userRepository.save(user);
+
+        User user2 = userRepository.findByName("mac gillen");
+        Assert.isTrue(
+                user2 != null,
+                "User was not found in the database"
+        );
     }
 }
