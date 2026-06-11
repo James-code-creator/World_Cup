@@ -82,9 +82,19 @@ public class WebController {
     }
 
     @GetMapping("/matches")
-    public String getMatches(Model model) {
+    public String getMatches(
+        Authentication authentication,
+        Model model
+    ) {
         Tournament tournament = Tournament.load();
         model.addAttribute("matches", tournament.matches());
+
+        User user = userRepository.findFirstByName(
+            authentication.getName()
+        );
+
+        
+
         return "matches";
     }
 }

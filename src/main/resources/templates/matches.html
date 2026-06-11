@@ -6,11 +6,49 @@
 </head>
 <body>
   <h1>Matches</h1>
-  <tr th:each="match : ${matches}">
-    <td th:text="${match.round}"></td>
-    <td th:text="${match.team1}"></td>
-    <td th:text="${match.team2}"></td>
-  </tr>   
-  
+
+  <div class="table">
+    <div>Date</div>
+    <div>Team 1</div>
+    <div>Team 2</div>
+    <div>Prediction</div>
+
+    <th:block th:each="match : ${matches}">
+        <div th:text="${match.date}"></div>
+        <div th:text="${match.team1}"></div>
+        <div th:text="${match.team2}"></div>
+
+        <div>
+            <form>
+                <input type="number" min="0">
+                <input type="number" min="0">
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+    </th:block>
+
+  </div>
+
 </body>
 </html>
+
+<style>
+  th {
+      text-align: left;
+  }
+  td, th {
+      padding-left: 10px;
+      padding-right: 10px;
+  }
+  form {
+      display: flex;
+      gap: 5px;
+  }
+  input[type="number"] {
+      width: 30px;
+  }
+  .table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+</style>
