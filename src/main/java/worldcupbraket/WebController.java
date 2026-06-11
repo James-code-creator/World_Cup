@@ -98,10 +98,12 @@ public class WebController {
             Model model
     ) {
         String username = authentication.getName();
+        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
         List<Match> matches = worldCupBraketService.getInstance().getMatches();
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
+        model.addAttribute("results", results);
         return "matches";
     }
 
@@ -130,10 +132,53 @@ public class WebController {
 
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
         List<Match> matches = braket.getMatches();
+        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
 
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
+        model.addAttribute("results", results);
 
         return "matches";
+    }
+
+    @GetMapping("/results")
+    public String getResults(
+            Authentication authentication,
+            Model model
+    ) {
+        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
+        List<Match> matches = worldCupBraketService.getInstance().getMatches();
+        model.addAttribute("matches", matches);
+        model.addAttribute("results", results);
+        return "results";
+    }
+
+    @PostMapping("/results")
+    public String saveResults(
+            @RequestParam String team1,
+            @RequestParam String team2,
+            @RequestParam String date,
+            @RequestParam String time,
+            @RequestParam int score1,
+            @RequestParam int score2,
+            Model model
+    ) {
+
+        WorldCupBraket braket = worldCupBraketService.addResult(
+                date,
+                time,
+                team1,
+                team2,
+                score1,
+                score2
+        );
+
+        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
+        List<Match> matches = braket.getMatches();
+
+        model.addAttribute("matches", matches);
+        model.addAttribute("results", results);
+
+        return "results";
     }
 }

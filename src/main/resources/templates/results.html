@@ -25,14 +25,9 @@
 
 <div class="p-4 flex flex-col gap-4 mx-auto">
   <th:block th:each="match : ${matches}">
-  <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
   <th:block th:with="result=${results != null ? results.get(match) : null}">
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
       <div class="px-4 py-5 sm:p-6">
-        <div th:if="${result != null}"
-             class="bg-red-500 text-white text-center py-2 font-semibold rounded-md">
-          BLOCKED
-        </div>
         <div role="list" class="divide-y divide-gray-200">
           <div class="py-4 grid grid-cols-6 sm:gap-4">
             <div class="sm:text-2xl col-span-2" th:text="${match.round()}"></div>
@@ -46,22 +41,21 @@
             <div class="sm:text-3xl m-auto" th:text="${match.team1}"></div>
             <div class="m-auto">vs</div>
             <div class="sm:text-3xl m-auto" th:text="${match.team2}"></div>
-            <form class="prediction-form col-span-3 py-4 flex flex-col text-xl gap-4" action="matches" method="post">
+            <form class="prediction-form col-span-3 py-4 flex flex-col text-xl gap-4" action="results" method="post">
               <input name="team1" th:value="${match.team1()}" class="hidden">
               <input name="team2" th:value="${match.team2()}" class="hidden">
               <input name="date" th:value="${match.date()}" class="hidden">
               <input name="time" th:value="${match.time()}" class="hidden">
               <div class="grid grid-cols-3">
-                <input th:value="${prediction != null ? prediction.Score1() : ''}" required name="score1" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
+                <input th:value="${result != null ? result.Score1() : ''}" required name="score1" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
                 <div class="m-auto"></div>
-                <input th:value="${prediction != null ? prediction.Score2() : ''}" required name="score2" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
+                <input th:value="${result != null ? result.Score2() : ''}" required name="score2" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
               </div>
             </form>
           </div>
         </div>
       </div>
     </div>
-  </th:block>
   </th:block>
   </th:block>
 </div>

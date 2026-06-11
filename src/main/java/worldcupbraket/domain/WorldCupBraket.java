@@ -46,4 +46,8 @@ public class WorldCupBraket {
         list.sort(Comparator.comparing(Player::getPoints));
         return list;
     }
+
+    public Map<Match, Result> getResults() {
+        return results;
+    }
 }

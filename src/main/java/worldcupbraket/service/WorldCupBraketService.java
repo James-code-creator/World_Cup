@@ -65,6 +65,13 @@ public class WorldCupBraketService {
         if (matchModel == null) {
             throw new IllegalStateException("Match not found");
         }
+
+        MatchResultModel resultModel = matchResultRepository.findFirstByMatch(matchModel);
+
+        if (resultModel != null) {
+            return worldCupBraket;
+        }
+
         PredictionModel predictionModel = new PredictionModel(
                 matchModel,
                 score1,
@@ -73,6 +80,45 @@ public class WorldCupBraketService {
         user.addPrediction(predictionModel);
         userRepository.saveAndFlush(user);
         predictionRepository.saveAndFlush(predictionModel);
+        return worldCupBraket;
+    }
+
+    @Transactional
+    public WorldCupBraket addResult(
+            String date,
+            String time,
+            String team1,
+            String team2,
+            int score1,
+            int score2
+
+    ) {
+        MatchModel matchModel =
+                matchRepository.findFirstByDateAndTimeAndTeam1AndTeam2(
+                        date,
+                        time,
+                        team1,
+                        team2
+                );
+
+        if (matchModel == null) {
+            throw new IllegalStateException("Match not found");
+        }
+
+        MatchResultModel resultModel =
+                matchResultRepository.findFirstByMatch(matchModel);
+
+        if (resultModel == null) {
+            resultModel = new MatchResultModel(
+                    matchModel,
+                    score1,
+                    score2
+            );
+        } else {
+            resultModel.score1 = score1;
+            resultModel.score2 = score2;
+        }
+        matchResultRepository.saveAndFlush(resultModel);
         return worldCupBraket;
     }
 
