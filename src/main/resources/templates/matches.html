@@ -6,6 +6,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 </head>
+
 <body class="flex flex-col gap-4 bg-zinc-100">
 <nav class="relative bg-white shadow-sm">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -28,19 +29,19 @@
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
       <div class="px-4 py-5 sm:p-6">
         <div role="list" class="divide-y divide-gray-200">
-          <div class="py-4 grid grid-cols-4 sm:gap-4">
-            <div class="sm:text-2xl m-auto col-span-4" th:text="${match.round()}"></div>
-            <div class="m-auto" th:text="${match.date}"></div>
-            <div class="m-auto" th:text="${match.time}"></div>
-            <div class="m-auto" th:text="${match.group}"></div>
-            <div class="m-auto" th:text="${match.ground}"></div>
+          <div class="py-4 grid grid-cols-6 sm:gap-4">
+            <div class="sm:text-2xl col-span-2" th:text="${match.round()}"></div>
+            <div class="m-auto text-sm" th:text="${match.date}"></div>
+            <div class="m-auto text-sm" th:text="${match.time}"></div>
+            <div class="m-auto text-sm" th:text="${match.group}"></div>
+            <div class="m-auto text-sm" th:text="${match.ground}"></div>
           </div>
 
           <div class="py-4 grid grid-cols-3 text-xl">
             <div class="sm:text-3xl m-auto" th:text="${match.team1}"></div>
             <div class="m-auto">vs</div>
             <div class="sm:text-3xl m-auto" th:text="${match.team2}"></div>
-            <form class="col-span-3 py-4 flex flex-col text-xl gap-4" action="matches" method="post">
+            <form class="prediction-form col-span-3 py-4 flex flex-col text-xl gap-4" action="matches" method="post">
               <input name="team1" th:value="${match.team1()}" class="hidden">
               <input name="team2" th:value="${match.team2()}" class="hidden">
               <input name="date" th:value="${match.date()}" class="hidden">
@@ -50,7 +51,6 @@
                 <div class="m-auto"></div>
                 <input th:value="${prediction != null ? prediction.Score2() : ''}" required name="score2" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
               </div>
-              <button type="submit" class="p-4 m-auto rounded bg-purple-200">Predict</button>
             </form>
           </div>
         </div>
@@ -62,6 +62,20 @@
 
 </body>
 </html>
+
+<script>
+    document.querySelectorAll('.prediction-form').forEach(form => {
+        const inputs = form.querySelectorAll('input[type="number"]');
+
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (form.checkValidity()) {
+                    form.requestSubmit();
+                }
+            });
+        });
+    });
+</script>
 
 <style>
     /* Chrome, Edge, Safari */
