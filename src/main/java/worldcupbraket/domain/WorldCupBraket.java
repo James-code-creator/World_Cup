@@ -1,18 +1,16 @@
-package worldcupbraket;
+package worldcupbraket.domain;
 
 import java.util.*;
 
 public class WorldCupBraket {
-    Tournament tournament = Tournament.load();
-    Map<Match, Result> results = new HashMap<>();
     Map<String, Player> players = new HashMap<>();
+    Map<Match, Result> results = new HashMap<>();
+    Matches matches = Matches.load();
 
-    public WorldCupBraket() {
-
-    }
+    public WorldCupBraket() {}
 
     public List<Match> getMatches() {
-        return tournament.matches();
+        return matches.matches();
     }
 
     public void addPlayer(Player player) {
@@ -21,6 +19,10 @@ public class WorldCupBraket {
 
     public List<Player> getPlayers() {
         return new ArrayList<>(players.values());
+    }
+
+    public Player getPlayer(String name) {
+        return players.get(name);
     }
 
     public void predictMatch(Prediction prediction, Player player) throws IllegalStateException {

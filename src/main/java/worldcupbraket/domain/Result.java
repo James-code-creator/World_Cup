@@ -1,6 +1,6 @@
-package worldcupbraket;
+package worldcupbraket.domain;
 
-public record Prediction(
+public record Result (
         Match Match,
         int Score1,
         int Score2

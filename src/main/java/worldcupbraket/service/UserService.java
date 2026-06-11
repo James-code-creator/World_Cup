@@ -1,7 +1,9 @@
-package worldcupbraket;
+package worldcupbraket.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import worldcupbraket.model.User;
+import worldcupbraket.model.UserRepository;
 
 @Service
 public class UserService {
@@ -31,5 +33,9 @@ public class UserService {
         }
 
         return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findFirstByName(username);
     }
 }

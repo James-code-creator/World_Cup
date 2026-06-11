@@ -3,52 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <title th:text="${nameOfApplication}">Matches</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 </head>
-<body>
-  <h1>Matches</h1>
-
-  <div class="table">
-    <div>Date</div>
-    <div>Team 1</div>
-    <div>Team 2</div>
-    <div>Prediction</div>
-
-    <th:block th:each="match : ${matches}">
-        <div th:text="${match.date}"></div>
-        <div th:text="${match.team1}"></div>
-        <div th:text="${match.team2}"></div>
-
-        <div>
-            <form>
-                <input type="number" min="0">
-                <input type="number" min="0">
-                <button type="submit">Predict</button>
-            </form>
+<body class="flex flex-col gap-4 bg-zinc-100">
+<nav class="relative bg-white shadow-sm">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-16 justify-between">
+      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex shrink-0 items-center">
+          <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" class="h-8 w-auto" />
         </div>
-    </th:block>
-
+        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <a href="#" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Matches</a>
+        </div>
+      </div>
+    </div>
   </div>
+</nav>
+
+<div class="p-4 flex flex-col gap-4 mx-auto">
+  <th:block th:each="match : ${matches}">
+    <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
+    <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
+      <div class="px-4 py-5 sm:p-6">
+        <div role="list" class="divide-y divide-gray-200">
+          <div class="py-4 grid grid-cols-4 sm:gap-4">
+            <div class="sm:text-2xl m-auto col-span-4" th:text="${match.round()}"></div>
+            <div class="m-auto" th:text="${match.date}"></div>
+            <div class="m-auto" th:text="${match.time}"></div>
+            <div class="m-auto" th:text="${match.group}"></div>
+            <div class="m-auto" th:text="${match.ground}"></div>
+          </div>
+
+          <div class="py-4 grid grid-cols-3 text-xl">
+            <div class="sm:text-3xl m-auto" th:text="${match.team1}"></div>
+            <div class="m-auto">vs</div>
+            <div class="sm:text-3xl m-auto" th:text="${match.team2}"></div>
+            <form class="col-span-3 py-4 flex flex-col text-xl gap-4" action="matches" method="post">
+              <input name="team1" th:value="${match.team1()}" class="hidden">
+              <input name="team2" th:value="${match.team2()}" class="hidden">
+              <input name="date" th:value="${match.date()}" class="hidden">
+              <input name="time" th:value="${match.time()}" class="hidden">
+              <div class="grid grid-cols-3">
+                <input th:value="${prediction != null ? prediction.Score1() : ''}" required name="score1" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
+                <div class="m-auto"></div>
+                <input th:value="${prediction != null ? prediction.Score2() : ''}" required name="score2" class="m-auto w-10 h-10 border-2 rounded text-center" type="number" min="0">
+              </div>
+              <button type="submit" class="p-4 m-auto rounded bg-purple-200">Predict</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </th:block>
+  </th:block>
+</div>
 
 </body>
 </html>
 
 <style>
-  th {
-      text-align: left;
-  }
-  td, th {
-      padding-left: 10px;
-      padding-right: 10px;
-  }
-  form {
-      display: flex;
-      gap: 5px;
-  }
-  input[type="number"] {
-      width: 30px;
-  }
-  .table {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
+    /* Chrome, Edge, Safari */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
 </style>

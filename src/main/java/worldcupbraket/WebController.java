@@ -1,6 +1,5 @@
 package worldcupbraket;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,23 +9,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import worldcupbraket.domain.*;
+import worldcupbraket.model.User;
+import worldcupbraket.service.UserService;
+import worldcupbraket.service.WorldCupBraketService;
 
 @Controller
 public class WebController {
     @Value("${spring.application.name}")
     private String appName;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    private final WorldCupBraketService worldCupBraketService;
+
+    public WebController(
+            UserService userService,
+            WorldCupBraketService worldCupBraketService
+    ) {
+        this.userService = userService;
+        this.worldCupBraketService = worldCupBraketService;
+    }
 
 
     @GetMapping("/")
@@ -37,18 +48,18 @@ public class WebController {
 
     @PostMapping("/")
     public String login(
-        @RequestParam String username,
-        @RequestParam String password,
-        HttpServletRequest request
+            @RequestParam String username,
+            @RequestParam String password,
+            HttpServletRequest request
     ) {
-       if (userService.authenticate(username, password)) {
+        if (userService.authenticate(username, password)) {
 
             Authentication authentication =
-                new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                );
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authentication);
@@ -60,21 +71,21 @@ public class WebController {
                     context
             );
 
-           return "redirect:/matches";
-       } else {
-           return "error";
-       }
+            return "redirect:/matches";
+        } else {
+            return "error";
+        }
     }
 
     @GetMapping("/signup")
     public String signup() {
-       return "signup";
+        return "signup";
     }
 
     @PostMapping("/signup")
     public String createUser(
-        @RequestParam String username,
-        @RequestParam String password
+            @RequestParam String username,
+            @RequestParam String password
     ) {
         System.out.println("Creating user: " + username);
         userService.createUser(username, password);
@@ -83,17 +94,45 @@ public class WebController {
 
     @GetMapping("/matches")
     public String getMatches(
-        Authentication authentication,
-        Model model
+            Authentication authentication,
+            Model model
     ) {
-        Tournament tournament = Tournament.load();
-        model.addAttribute("matches", tournament.matches());
+        String username = authentication.getName();
+        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
+        List<Match> matches = worldCupBraketService.getInstance().getMatches();
+        model.addAttribute("matches", matches);
+        model.addAttribute("predictions", predictions);
+        return "matches";
+    }
 
-        User user = userRepository.findFirstByName(
-            authentication.getName()
+    @PostMapping("/matches")
+    public String savePredictions(
+            @RequestParam String team1,
+            @RequestParam String team2,
+            @RequestParam String date,
+            @RequestParam String time,
+            @RequestParam int score1,
+            @RequestParam int score2,
+            Authentication authentication,
+            Model model
+    ) {
+        String username = authentication.getName();
+
+        WorldCupBraket braket = worldCupBraketService.addPrediction(
+                username,
+                date,
+                time,
+                team1,
+                team2,
+                score1,
+                score2
         );
 
-        
+        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
+        List<Match> matches = braket.getMatches();
+
+        model.addAttribute("matches", matches);
+        model.addAttribute("predictions", predictions);
 
         return "matches";
     }

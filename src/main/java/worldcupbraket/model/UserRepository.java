@@ -1,9 +1,9 @@
-package worldcupbraket;
+package worldcupbraket.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    public User findFirstByName(String name);
+    User findFirstByName(String name);
 
 }

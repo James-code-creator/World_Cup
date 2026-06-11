@@ -1,23 +1,24 @@
-package worldcupbraket;
+package worldcupbraket.domain;
 
 import tools.jackson.databind.ObjectMapper;
+
 import java.util.Comparator;
 import java.util.List;
 
-public record Tournament(
+public record Matches(
         String name,
         List<Match> matches
 ) {
-    public static Tournament load() {
+    public static Matches load() {
         ObjectMapper mapper = new ObjectMapper();
-        Tournament tournament = mapper.readValue(
-                Tournament.class
+        Matches matches = mapper.readValue(
+                Matches.class
                         .getClassLoader()
                         .getResourceAsStream("worldcup.json"),
-                Tournament.class
+                Matches.class
         );
-        tournament.sortMatches();
-        return tournament;
+        matches.sortMatches();
+        return matches;
     }
 
     private void sortMatches() {

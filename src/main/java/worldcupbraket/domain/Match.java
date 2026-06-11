@@ -1,4 +1,4 @@
-package worldcupbraket;
+package worldcupbraket.domain;
 
 public record Match(
     String round,

@@ -1,12 +1,13 @@
-package worldcupbraket;
+package worldcupbraket.domain;
+
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
-    String name;
-    int points;
+    public final String name;
     private final Map<Match, Prediction> predictions;
+    int points;
 
     public Player(String name) {
         this.name = name;
@@ -26,6 +27,10 @@ public class Player {
         if (predictions.containsKey(result.Match())) {
             Prediction prediction = predictions.get(result.Match());
             points += calculatePoints(prediction, result);        }
+    }
+
+    public Map<Match, Prediction> getPredictions() {
+        return predictions;
     }
 
     private int calculatePoints(Prediction prediction, Result result) {
