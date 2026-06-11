@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -145,13 +147,24 @@ public class WebController {
         return "matches";
     }
 
+    @GetMapping("/scoreboard")
+    public String getScoreboard(Model model) {
+        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
+        players.sort(Comparator.comparing(Player::getPoints).reversed());
+        model.addAttribute("players", players);
+        return "scoreboard";
+    }
+
     @GetMapping("/results")
     public String getResults(
             Authentication authentication,
             Model model
     ) {
+        String username = authentication.getName();
+
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         List<Match> matches = worldCupBraketService.getInstance().getMatches();
+        model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
         return "results";
