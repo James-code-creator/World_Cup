@@ -3,6 +3,7 @@ package worldcupbraket;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "worldcup_user")
 public class User {
 
     @Id
@@ -23,5 +24,17 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
