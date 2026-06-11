@@ -38,4 +38,8 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findFirstByName(username);
     }
+
+    public boolean isAdmin(String name) {
+        return "marcos".equals(name);
+    }
 }

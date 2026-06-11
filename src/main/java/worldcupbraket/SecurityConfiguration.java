@@ -23,6 +23,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.GET, "/", "/signup").permitAll()
                     .requestMatchers(HttpMethod.POST, "/", "/signup", "/signup/").permitAll()
+                    .requestMatchers("/results", "/results/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             )
             .formLogin(form -> form.disable())

@@ -54,11 +54,15 @@ public class WebController {
     ) {
         if (userService.authenticate(username, password)) {
 
+            List<SimpleGrantedAuthority> authorities = userService.isAdmin(username)
+                    ? List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"))
+                    : List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(
                             username,
                             null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                            authorities
                     );
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();

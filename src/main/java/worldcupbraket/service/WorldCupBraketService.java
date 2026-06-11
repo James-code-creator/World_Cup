@@ -66,6 +66,11 @@ public class WorldCupBraketService {
             throw new IllegalStateException("Match not found");
         }
 
+        Match matchDomain = getMatchFrom(matchModel);
+        if (matchDomain != null && matchDomain.hasStarted()) {
+            return worldCupBraket;
+        }
+
         MatchResultModel resultModel = matchResultRepository.findFirstByMatch(matchModel);
 
         if (resultModel != null) {
