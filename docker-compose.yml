@@ -1,0 +1,14 @@
+services:
+  app:
+    image: ghcr.io/james-code-creator/world_cup:${TAG:-latest}
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_PATH: /data/database.db
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  data:
