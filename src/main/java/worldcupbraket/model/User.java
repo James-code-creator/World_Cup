@@ -1,8 +1,6 @@
 package worldcupbraket.model;
 
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +21,7 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    private List<PredictionModel> predictions = new ArrayList<>();
+    private final List<PredictionModel> predictions = new ArrayList<>();
 
     protected User() {}
 

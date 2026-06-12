@@ -3,7 +3,6 @@ package worldcupbraket;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 import worldcupbraket.domain.*;
-import worldcupbraket.domain.Match;
 
 import java.util.List;
 
