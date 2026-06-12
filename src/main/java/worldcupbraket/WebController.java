@@ -1,28 +1,27 @@
 package worldcupbraket;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import worldcupbraket.domain.*;
-import worldcupbraket.model.User;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class WebController {
@@ -41,14 +40,25 @@ public class WebController {
         this.worldCupBraketService = worldCupBraketService;
     }
 
-
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, Authentication authentication) {
+
+        if (authentication != null &&
+                authentication.isAuthenticated() &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/matches";
+        }
+
         model.addAttribute("nameOfApplication", appName);
         return "index";
     }
 
-    @PostMapping("/")
+    @GetMapping("/login")
+    public String getLogin() {
+        return "redirect:/";
+    }
+
+    @PostMapping("/login")
     public String login(
             @RequestParam String username,
             @RequestParam String password,
@@ -79,7 +89,7 @@ public class WebController {
 
             return "redirect:/matches";
         } else {
-            return "error";
+            return "redirect:/";
         }
     }
 
