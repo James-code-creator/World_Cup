@@ -1,5 +1,6 @@
 package worldcupbraket.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import worldcupbraket.model.User;
@@ -7,6 +8,9 @@ import worldcupbraket.model.UserRepository;
 
 @Service
 public class UserService {
+    @Value("${app.admin.username}")
+    private String adminUsername;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -40,6 +44,7 @@ public class UserService {
     }
 
     public boolean isAdmin(String name) {
-        return "marcos".equals(name);
+        System.out.println(adminUsername);
+        return adminUsername.equals(name);
     }
 }
