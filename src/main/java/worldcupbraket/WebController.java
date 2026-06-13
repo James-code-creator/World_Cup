@@ -19,6 +19,7 @@ import worldcupbraket.domain.*;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,31 @@ public class WebController {
         String username = authentication.getName();
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
-        List<Match> matches = worldCupBraketService.getInstance().getMatches();
+        List<Match> allMatches = worldCupBraketService.getInstance().getMatches();
+        List<Match> notStarted = allMatches.stream()
+                .filter(m -> !m.hasStarted())
+                .toList();
+
+        List<Match> inProgress = allMatches.stream()
+                .filter(m -> m.hasStarted() && !results.containsKey(m))
+                .toList();
+
+        List<Match> completed = allMatches.stream()
+                .filter(results::containsKey)
+                .toList();
+
+        List<Match> lastTwoCompleted =
+                completed.subList(
+                        Math.max(0, completed.size() - 2),
+                        completed.size()
+                );
+
+        List<Match> matches = new ArrayList<>();
+
+        matches.addAll(lastTwoCompleted);
+        matches.addAll(inProgress);
+        matches.addAll(notStarted);
+
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
         model.addAttribute("results", results);
@@ -172,11 +197,13 @@ public class WebController {
     ) {
         String username = authentication.getName();
 
+        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         List<Match> matches = worldCupBraketService.getInstance().getMatches();
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
+        model.addAttribute("predictions", predictions);
         return "results";
     }
 

@@ -33,6 +33,7 @@
 <div class="p-4 flex flex-col gap-4 mx-auto">
   <th:block th:each="match : ${matches}">
   <th:block th:with="result=${results != null ? results.get(match) : null}">
+  <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
       <div class="px-4 py-5 sm:p-6">
         <div role="list" class="divide-y divide-gray-200">
@@ -54,15 +55,48 @@
               <input name="date" th:value="${match.date()}" class="hidden">
               <input name="time" th:value="${match.time()}" class="hidden">
               <div class="grid grid-cols-3">
-                <input th:value="${result != null ? result.Score1() : ''}" th:disabled="${!isAdmin}" required name="score1" class="m-auto w-10 h-10 border-2 rounded text-center disabled:opacity-40 disabled:cursor-not-allowed" type="number" min="0">
-                <div class="m-auto"></div>
-                <input th:value="${result != null ? result.Score2() : ''}" th:disabled="${!isAdmin}" required name="score2" class="m-auto w-10 h-10 border-2 rounded text-center disabled:opacity-40 disabled:cursor-not-allowed" type="number" min="0">
+                <input
+                  th:value="${result != null ? result.Score1() : ''}"
+                  th:disabled="${!isAdmin}"
+                  required
+                  name="score1"
+                  class="m-auto w-10 h-10 border-2 rounded text-center
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+                  type="number"
+                  min="0"
+                >
+                <div class="m-auto">Final Result</div>
+                <input
+                  th:value="${result != null ? result.Score2() : ''}"
+                  th:disabled="${!isAdmin}"
+                  required
+                  name="score2"
+                  class="m-auto w-10 h-10 border-2 rounded text-center
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+                  type="number"
+                  min="0"
+                >
               </div>
             </form>
+          </div>
+
+          <div th:if="${prediction != null}" class="text-xl col-span-3 py-4 grid grid-cols-3 place-items-center">
+            <p
+              th:text="${prediction != null ? prediction.Score1() : ''}"
+              class="m-auto w-10 h-10 border-2 rounded text-center
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+            ></p>
+            <p class="m-auto">Your Prediction</p>
+            <p
+              th:text="${prediction != null ? prediction.Score2() : ''}"
+              class="m-auto w-10 h-10 border-2 rounded text-center
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+            ></p>
           </div>
         </div>
       </div>
     </div>
+  </th:block>
   </th:block>
   </th:block>
 </div>
