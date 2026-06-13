@@ -188,7 +188,8 @@ public class WebController {
             @RequestParam String time,
             @RequestParam int score1,
             @RequestParam int score2,
-            Model model
+            Model model,
+            Authentication authentication
     ) {
 
         WorldCupBraket braket = worldCupBraketService.addResult(
@@ -202,7 +203,8 @@ public class WebController {
 
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         List<Match> matches = braket.getMatches();
-
+        String username = authentication.getName();
+        model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
 
