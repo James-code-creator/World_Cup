@@ -92,6 +92,10 @@ class DomainTests {
                     player.getPoints() == game.points,
                     "Player points are not correct"
             );
+            Assert.isTrue(
+                    player.getLastPointChange() == game.points,
+                    "Player diff points are not correct"
+            );
         }
     }
 }

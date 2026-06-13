@@ -44,6 +44,7 @@
               <th scope="col" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">Rank</th>
               <th scope="col" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Points</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Round</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
@@ -62,6 +63,9 @@
                 </td>
                 <td th:text="${player.getPoints()} + ' pt'"
                     class="px-3 py-4 text-sm whitespace-nowrap">
+                </td>
+                <td th:text="'+'+${player..getLastPointChange()}"
+                    class="px-3 py-4 text-sm whitespace-nowrap text-green-700">
                 </td>
               </tr>
             </th:block>

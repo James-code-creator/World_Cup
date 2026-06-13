@@ -40,10 +40,6 @@
              class="bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
           HAS STARTED
         </div>
-        <div th:if="${result != null}"
-             class="bg-green-500 text-white text-center py-2 font-semibold rounded-md">
-          COMPLETED
-        </div>
         <div role="list" class="divide-y divide-gray-200">
           <div class="py-4 grid grid-cols-4 sm:grid-cols-6 sm:gap-4">
             <div class="sm:text-2xl col-span-4 sm:col-span-2" th:text="${match.round()}"></div>

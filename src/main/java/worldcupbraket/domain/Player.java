@@ -1,22 +1,22 @@
 package worldcupbraket.domain;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Player {
     public final String name;
     private final Map<Match, Prediction> predictions;
     int points;
+    int lastPointChange;
+    List<Integer> pointProgression = new ArrayList<>();
 
     public Player(String name) {
         this.name = name;
         this.points = 0;
         this.predictions = new HashMap<>();
-    }
-
-    public int getPoints() {
-        return points;
     }
 
     public void predict(Prediction prediction) {
@@ -26,12 +26,30 @@ public class Player {
     public void gradeMatch(Result result) {
         if (predictions.containsKey(result.Match())) {
             Prediction prediction = predictions.get(result.Match());
-            points += calculatePoints(prediction, result);        }
+            points += calculatePoints(prediction, result);
+            pointProgression.add(points);
+            lastPointChange = pointProgression.size() < 2
+                    ? points
+                    : pointProgression.getLast() - pointProgression.get(pointProgression.size() - 2);
+        }
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public int getLastPointChange() {
+        return lastPointChange;
+    }
+
+    public List<Integer> getPointProgression() {
+        return pointProgression;
     }
 
     public Map<Match, Prediction> getPredictions() {
         return predictions;
     }
+
 
     private int calculatePoints(Prediction prediction, Result result) {
         int correctWinner = calculatePointsForWinner(prediction, result);

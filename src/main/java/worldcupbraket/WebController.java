@@ -126,19 +126,8 @@ public class WebController {
                 .filter(m -> m.hasStarted() && !results.containsKey(m))
                 .toList();
 
-        List<Match> completed = allMatches.stream()
-                .filter(results::containsKey)
-                .toList();
-
-        List<Match> lastTwoCompleted =
-                completed.subList(
-                        Math.max(0, completed.size() - 2),
-                        completed.size()
-                );
-
         List<Match> matches = new ArrayList<>();
 
-        matches.addAll(lastTwoCompleted);
         matches.addAll(inProgress);
         matches.addAll(notStarted);
 
@@ -199,7 +188,8 @@ public class WebController {
 
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
-        List<Match> matches = worldCupBraketService.getInstance().getMatches();
+        List<Match> matches = worldCupBraketService.getInstance().getMatches().stream()
+                .filter(Match::hasStarted).toList().reversed();
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
