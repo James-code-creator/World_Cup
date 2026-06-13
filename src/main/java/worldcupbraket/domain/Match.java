@@ -1,5 +1,7 @@
 package worldcupbraket.domain;
 
+import jakarta.annotation.Nullable;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -11,6 +13,7 @@ public record Match(
     String time,
     String team1,
     String team2,
+    @Nullable Score score,
     String group,
     String ground
 ) {

@@ -18,6 +18,12 @@ class DomainTests {
                 !matches.isEmpty(),
                 "No matches were loaded"
         );
+        Score score = matches.getFirst().score();
+        assert score != null;
+        Assert.isTrue(
+                score.ft().getFirst() == 2,
+                "No matches were loaded"
+        );
         Player newPlayer = new Player("David Johns");
         braket.addPlayer(newPlayer);
         List<Player> players = braket.getPlayers();

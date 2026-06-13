@@ -28,6 +28,7 @@ public class WorldCupBraketService {
         worldCupBraket = new WorldCupBraket();
         this.addAllPlayers();
         this.addAllPredictions();
+        this.downloadLatestMatchResults();
         this.addAllMatchResults();
     }
 
@@ -162,6 +163,37 @@ public class WorldCupBraketService {
                     matchResultModel.score2
             );
             worldCupBraket.recordMatchResult(result);
+        });
+    }
+
+    private void downloadLatestMatchResults() {
+        worldCupBraket.getMatches().forEach(match -> {
+            MatchModel matchModel =
+                    matchRepository.findFirstByDateAndTimeAndTeam1AndTeam2(
+                            match.date(),
+                            match.time(),
+                            match.team1(),
+                            match.team2()
+                    );
+            if (matchModel == null) {
+                return;
+            }
+            if (match.score() != null && match.score().ft() != null) {
+                MatchResultModel resultModel =
+                        matchResultRepository.findFirstByMatch(matchModel);
+
+                if (resultModel == null) {
+                    resultModel = new MatchResultModel(
+                            matchModel,
+                            match.score().ft().getFirst(),
+                            match.score().ft().getLast()
+                    );
+                } else {
+                    resultModel.score1 = match.score().ft().getFirst();
+                    resultModel.score2 = match.score().ft().getLast();
+                }
+                matchResultRepository.save(resultModel);
+            }
         });
     }
 
