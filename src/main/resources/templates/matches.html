@@ -77,6 +77,24 @@
                        type="number"
                        min="0">
               </div>
+              <th:block th:with="stats=${predictionStats != null ? predictionStats.get(match) : null}">
+                <div th:if="${stats != null}" class="grid grid-cols-5 text-gray-600">
+                  <div class="col-span-2 ">
+                    <span th:text="${stats.team1WinPercentage()} + '%'"></span>
+                    <span>Win</span>
+                  </div>
+
+                  <div>
+                    <span th:text="${stats.drawPercentage()} + '%'"></span>
+                    <span>Draw</span>
+                  </div>
+
+                  <div class="col-span-2 ">
+                    <span th:text="${stats.team2WinPercentage()} + '%'"></span>
+                    <span>Win</span>
+                  </div>
+                </div>
+              </th:block>
             </form>
           </div>
         </div>

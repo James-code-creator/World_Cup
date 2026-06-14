@@ -48,6 +48,22 @@ public class WorldCupBraket {
         return list;
     }
 
+    public Map<Match, List<Prediction>> getAllPredictions() {
+        Map<Match, List<Prediction>> allPredictions = new HashMap<>();
+        players.forEach((_, player) -> {
+            player.getPredictions().forEach((match, prediction) -> {
+                if (allPredictions.containsKey(match)) {
+                    allPredictions.get(match).add(prediction);
+                } else {
+                    List<Prediction> predictions = new ArrayList<>();
+                    predictions.add(prediction);
+                    allPredictions.put(match, predictions);
+                }
+            });
+        });
+        return allPredictions;
+    }
+
     public Map<Match, Result> getResults() {
         return results;
     }

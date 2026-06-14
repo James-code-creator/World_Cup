@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import worldcupbraket.domain.*;
+import worldcupbraket.service.PredictionStatsCalculatorService;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static worldcupbraket.service.PredictionStatsCalculatorService.calculateOutcome;
 
 @Controller
 public class WebController {
@@ -117,6 +117,7 @@ public class WebController {
         String username = authentication.getName();
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
+        Map<Match, List<Prediction>> allPredictions = worldCupBraketService.getInstance().getAllPredictions();
         List<Match> allMatches = worldCupBraketService.getInstance().getMatches();
         List<Match> notStarted = allMatches.stream()
                 .filter(m -> !m.hasStarted())
@@ -131,8 +132,16 @@ public class WebController {
         matches.addAll(inProgress);
         matches.addAll(notStarted);
 
+        Map<Match, PredictionStats> predictionStats = new HashMap<>();
+
+        allPredictions.forEach((match, pred) ->
+                predictionStats.put(match, calculateOutcome(pred)));
+
+        model.addAttribute("predictionStats", predictionStats);
+
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
+        model.addAttribute("predictionStats", predictionStats);
         model.addAttribute("results", results);
         return "matches";
     }
