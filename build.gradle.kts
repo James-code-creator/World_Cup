@@ -31,6 +31,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.jfree:jfreechart:1.5.0")
 }
 
 tasks.withType<Test> {

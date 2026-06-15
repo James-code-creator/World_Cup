@@ -2,6 +2,9 @@ package worldcupbraket;
 
 import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,9 +19,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import worldcupbraket.domain.*;
+import worldcupbraket.service.GraphService;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static worldcupbraket.service.PredictionStatsCalculatorService.calculateOutcome;
@@ -240,5 +248,23 @@ public class WebController {
         model.addAttribute("results", results);
 
         return "results";
+    }
+
+    @GetMapping("/scoreboard.png")
+    public ResponseEntity<byte[]> saveResults() throws IOException {
+
+        List<Player> players = worldCupBraketService.getInstance().getPlayers();
+
+        BufferedImage image = GraphService.createPlayersScoreBoardGraph(players);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+
+        byte[] bytes = baos.toByteArray();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=scoreboard.png")
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
     }
 }
