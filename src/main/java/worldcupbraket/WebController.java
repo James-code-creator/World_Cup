@@ -1,7 +1,6 @@
 package worldcupbraket;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import worldcupbraket.domain.*;
-import worldcupbraket.service.PredictionStatsCalculatorService;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
 
@@ -31,13 +30,17 @@ public class WebController {
 
     private final UserService userService;
 
+    private final RememberMeServices rememberMeServices;
+
     private final WorldCupBraketService worldCupBraketService;
 
     public WebController(
             UserService userService,
+            RememberMeServices rememberMeServices,
             WorldCupBraketService worldCupBraketService
     ) {
         this.userService = userService;
+        this.rememberMeServices = rememberMeServices;
         this.worldCupBraketService = worldCupBraketService;
     }
 
@@ -63,7 +66,8 @@ public class WebController {
     public String login(
             @RequestParam String username,
             @RequestParam String password,
-            HttpServletRequest request
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
         if (userService.authenticate(username, password)) {
 
@@ -82,16 +86,17 @@ public class WebController {
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
 
-            HttpSession session = request.getSession(true);
-            session.setAttribute(
+            request.getSession(true).setAttribute(
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     context
             );
 
+            rememberMeServices.loginSuccess(request, response, authentication);
+
             return "redirect:/matches";
-        } else {
-            return "redirect:/";
         }
+
+        return "redirect:/";
     }
 
     @GetMapping("/signup")

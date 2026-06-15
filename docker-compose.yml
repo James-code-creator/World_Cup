@@ -6,6 +6,8 @@ services:
       - "8080:8080"
     environment:
       ADMIN_USERNAME: admin
+      SECURE_COOKIE: false
+      REMEMBER_ME_KEY: world-cup-secret-key-change-me
       DB_PATH: /data/database.db
     volumes:
       - data:/data
