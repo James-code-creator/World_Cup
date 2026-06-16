@@ -17,6 +17,7 @@ public class Player {
         this.name = name;
         this.points = 0;
         this.predictions = new HashMap<>();
+        pointProgression.add(points);
     }
 
     public void predict(Prediction prediction) {
@@ -31,6 +32,8 @@ public class Player {
             lastPointChange = pointProgression.size() < 2
                     ? points
                     : pointProgression.getLast() - pointProgression.get(pointProgression.size() - 2);
+        } else {
+            pointProgression.add(points);
         }
     }
 
