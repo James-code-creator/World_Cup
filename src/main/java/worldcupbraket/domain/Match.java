@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public record Match(
     String round,
@@ -26,5 +27,18 @@ public record Match(
                 zone
         );
         return !ZonedDateTime.now(zone).isBefore(matchStart);
+    }
+
+    public String getLocalTimeIso() {
+        String[] parts = time.split(" ");
+        ZoneId zone = ZoneId.of(parts[1]);
+
+        return ZonedDateTime.of(
+                        LocalDate.parse(date),
+                        LocalTime.parse(parts[0]),
+                        zone
+                )
+                .toOffsetDateTime()
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }

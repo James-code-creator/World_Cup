@@ -34,72 +34,72 @@
   <th:block th:each="match : ${matches}">
   <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
   <th:block th:with="result=${results != null ? results.get(match) : null}">
+  <th:block th:with="stats=${predictionStats != null ? predictionStats.get(match) : null}">
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
-      <div class="px-4 py-5 sm:p-6">
+      <form class="px-4 py-5 sm:p-6 grid grid-cols-12 gap-4 text-center prediction-form" action="matches" method="post">
+        <input name="team1" th:value="${match.team1()}" class="hidden">
+        <input name="team2" th:value="${match.team2()}" class="hidden">
+        <input name="date" th:value="${match.date()}" class="hidden">
+        <input name="time" th:value="${match.time()}" class="hidden">
+
         <div th:if="${match.hasStarted() and result == null}"
-             class="bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
+             class="col-span-12 bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
           HAS STARTED
         </div>
-        <div role="list" class="divide-y divide-gray-200">
-          <div class="py-4 grid grid-cols-4 sm:grid-cols-6 sm:gap-4">
-            <div class="sm:text-2xl col-span-4 sm:col-span-2" th:text="${match.round()}"></div>
-            <div class="m-auto text-sm" th:text="${match.date}"></div>
-            <div class="m-auto text-sm" th:text="${match.time}"></div>
-            <div class="m-auto text-sm" th:text="${match.group}"></div>
-            <div class="m-auto text-sm" th:text="${match.ground}"></div>
-          </div>
 
-          <div class="py-4 grid grid-cols-5 text-center text-xl">
-            <div class="sm:text-3xl m-auto col-span-2" th:text="${match.team1}"></div>
-            <div class="m-auto">vs</div>
-            <div class="sm:text-3xl m-auto col-span-2" th:text="${match.team2}"></div>
-            <form class="prediction-form col-span-5 py-4 flex flex-col text-xl gap-4" action="matches" method="post">
-              <input name="team1" th:value="${match.team1()}" class="hidden">
-              <input name="team2" th:value="${match.team2()}" class="hidden">
-              <input name="date" th:value="${match.date()}" class="hidden">
-              <input name="time" th:value="${match.time()}" class="hidden">
-              <div class="grid grid-cols-5">
-                <input th:value="${prediction != null ? prediction.Score1() : ''}"
-                       th:disabled="${match.hasStarted()}"
-                       required
-                       name="score1"
-                       class="col-span-2 m-auto w-10 h-10 border-2 rounded
-                       text-center disabled:opacity-40 disabled:cursor-not-allowed"
-                       type="number"
-                       min="0">
-                <div class="m-auto"></div>
-                <input th:value="${prediction != null ? prediction.Score2() : ''}"
-                       th:disabled="${match.hasStarted()}"
-                       required
-                       name="score2"
-                       class="col-span-2 m-auto w-10 h-10 border-2 rounded
-                       text-center disabled:opacity-40 disabled:cursor-not-allowed"
-                       type="number"
-                       min="0">
-              </div>
-              <th:block th:with="stats=${predictionStats != null ? predictionStats.get(match) : null}">
-                <div th:if="${stats != null}" class="grid grid-cols-5 text-gray-600">
-                  <div class="col-span-2 ">
-                    <span th:text="${#numbers.formatDecimal(stats.team1WinPercentage(), 1, 1)} + '%'"></span>
-                    <span>Win</span>
-                  </div>
-
-                  <div>
-                    <span th:text="${#numbers.formatDecimal(stats.drawPercentage(), 1, 1)} + '%'"></span>
-                    <span>Draw</span>
-                  </div>
-
-                  <div class="col-span-2 ">
-                    <span th:text="${#numbers.formatDecimal(stats.team2WinPercentage(), 1, 1)} + '%'"></span>
-                    <span>Win</span>
-                  </div>
-                </div>
-              </th:block>
-            </form>
-          </div>
+        <div class="col-span-12 w-full"
+             th:text="${match.ground()}">
         </div>
-      </div>
+
+        <div class="text-2xl col-span-12 w-full"
+             th:text="${match.group()} + ' - ' + ${match.round()}">
+        </div>
+
+        <div class="col-span-12 w-full my-4 border-t border-gray-300"></div>
+
+        <div class="text-sm sm:text-3xl m-auto col-span-3 sm:col-span-4" th:text="${match.team1}"></div>
+        <input th:value="${prediction != null ? prediction.Score1() : ''}"
+               th:disabled="${match.hasStarted()}"
+               required
+               name="score1"
+               class="col-span-2 sm:col-span-1 ml-auto my-auto w-10 h-10 border-2 rounded
+               text-center disabled:opacity-40 disabled:cursor-not-allowed"
+               type="number"
+               min="0">
+        <div class="m-auto text-2xl col-span-2">vs</div>
+        <input th:value="${prediction != null ? prediction.Score2() : ''}"
+               th:disabled="${match.hasStarted()}"
+               required
+               name="score2"
+               class="col-span-2 sm:col-span-1 mr-auto my-auto w-10 h-10 border-2 rounded
+               text-center disabled:opacity-40 disabled:cursor-not-allowed"
+               type="number"
+               min="0">
+        <div class="text-sm sm:text-3xl m-auto col-span-3 sm:col-span-4" th:text="${match.team2}"></div>
+
+        <div class="col-span-12 w-full my-4 border-t border-gray-300"></div>
+
+        <div class="ml-auto grid col-span-5" th:if="${stats != null}">
+          <span th:text="${#numbers.formatDecimal(stats.team1WinPercentage(), 1, 1)} + '%'"></span>
+          <span>Win</span>
+        </div>
+        <div class="grid col-span-2" th:if="${stats != null}">
+          <span th:text="${#numbers.formatDecimal(stats.drawPercentage(), 1, 1)} + '%'"></span>
+          <span>Draw</span>
+        </div>
+        <div class="mr-auto grid col-span-5" th:if="${stats != null}">
+          <span th:text="${#numbers.formatDecimal(stats.team2WinPercentage(), 1, 1)} + '%'"></span>
+          <span>Win</span>
+        </div>
+
+        <div th:if="${stats != null}" class="col-span-12 w-full my-4 border-t border-gray-300"></div>
+
+        <div class="m-auto col-span-12 localtime"
+             th:text="${match.getLocalTimeIso()}">
+        </div>
+      </form>
     </div>
+  </th:block>
   </th:block>
   </th:block>
   </th:block>
@@ -138,6 +138,38 @@
                 }
             });
         });
+    });
+</script>
+
+<script>
+    document.querySelectorAll('.localtime').forEach(localtime => {
+        const isoDateTime = localtime.textContent.trim();
+        const date = new Date(isoDateTime);
+
+        const formattedTime = date.toLocaleString('de-DE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        const now = new Date();
+        let diff = date - now;
+
+        if (diff < 0) {
+            localtime.textContent = `${formattedTime} (started)`;
+            return;
+        }
+
+        const totalMinutes = Math.floor(diff / (1000 * 60));
+        const days = Math.floor(totalMinutes / (60 * 24));
+        const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+        const minutes = totalMinutes % 60;
+
+        localtime.textContent =
+            `${formattedTime} (in ${days}d ${hours}h ${minutes}m)`;
     });
 </script>
 
