@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${nameOfApplication}">Matches</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="World Cup">
+  <link rel="apple-touch-icon" href="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 </head>
@@ -24,6 +30,9 @@
         </div>
         <div class="sm:ml-6 sm:flex sm:space-x-8">
           <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
+        </div>
+        <div class="sm:ml-6 sm:flex sm:space-x-8">
+          <button id="install" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Install</button>
         </div>
       </div>
     </div>
@@ -170,6 +179,32 @@
 
         localtime.textContent =
             `${formattedTime} (in ${days}d ${hours}h ${minutes}m)`;
+    });
+</script>
+
+<script>
+    let installPrompt = null;
+    const installButton = document.querySelector("#install");
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        installPrompt = event;
+        installButton.hidden = false;
+    });
+
+    installButton.addEventListener("click", async () => {
+        if (!installPrompt) {
+            return;
+        }
+
+        installPrompt.prompt();
+
+        const choice = await installPrompt.userChoice;
+
+        console.log("Install result:", choice.outcome);
+
+        installPrompt = null;
+        installButton.hidden = true;
     });
 </script>
 

@@ -25,13 +25,14 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             RememberMeServices rememberMeServices
-    ) throws Exception {
+    ) {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/", "/signup", "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/", "/signup", "/signup/", "/login", "/login/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/results", "/results/**").hasRole("ADMIN")
+                        .requestMatchers("/manifest.json", "/logo.svg").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
