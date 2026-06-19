@@ -148,6 +148,7 @@ public class WebController {
 
         matches.addAll(inProgress);
         matches.addAll(notStarted);
+        matches.sort(Comparator.comparing(Match::getStartTime));
 
         Map<Match, PredictionStats> predictionStats = new HashMap<>();
 
@@ -221,7 +222,11 @@ public class WebController {
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         List<Match> matches = worldCupBraketService.getInstance().getMatches().stream()
-                .filter(Match::hasStarted).toList().reversed();
+                .filter(Match::hasStarted).toList();
+
+        List<Match> sortedMatches = new ArrayList<>(matches);
+        sortedMatches.sort(Comparator.comparing(Match::getStartTime));
+        sortedMatches = sortedMatches.reversed();
 
         boolean isLiveUpdated;
         try {
@@ -230,9 +235,10 @@ public class WebController {
             isLiveUpdated = false;
         }
 
+
         model.addAttribute("isLiveUpdated", isLiveUpdated);
         model.addAttribute("isAdmin", userService.isAdmin(username));
-        model.addAttribute("matches", matches);
+        model.addAttribute("matches", sortedMatches);
         model.addAttribute("results", results);
         model.addAttribute("predictions", predictions);
         return "results";
