@@ -31,7 +31,7 @@ public class LiveMatchService {
                 .GET()
                 .timeout(Duration.ofSeconds(5))
                 .build();
-
+        System.out.println("Send Sport API Swisstxt call");
         String body = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         ObjectMapper mapper = new ObjectMapper();
 

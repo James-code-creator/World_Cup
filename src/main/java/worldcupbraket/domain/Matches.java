@@ -1,7 +1,6 @@
 package worldcupbraket.domain;
 
 import tools.jackson.databind.ObjectMapper;
-import worldcupbraket.domain.livematch.LiveMatch;
 
 import java.io.IOException;
 import java.io.InputStream;

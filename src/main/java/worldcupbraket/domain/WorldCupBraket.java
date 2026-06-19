@@ -6,7 +6,6 @@ public class WorldCupBraket {
     Map<String, Player> players = new HashMap<>();
     Map<Match, Result> results = new HashMap<>();
     Matches matches = Matches.load();
-    Map<Player, List<Integer>> scoreboard = new HashMap<>();
 
     public WorldCupBraket() {}
 

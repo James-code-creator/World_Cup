@@ -140,13 +140,14 @@ public class WebController {
                 .filter(m -> !m.hasStarted())
                 .toList();
 
-        List<Match> inProgress = allMatches.stream()
-                .filter(m -> m.hasStarted() && !results.containsKey(m))
-                .toList();
+        Match inProgress = allMatches.stream()
+                .filter(Match::hasStarted)
+                .sorted(Comparator.comparing(Match::getStartTime))
+                .toList().getLast();
 
         List<Match> matches = new ArrayList<>();
 
-        matches.addAll(inProgress);
+        matches.add(inProgress);
         matches.addAll(notStarted);
         matches.sort(Comparator.comparing(Match::getStartTime));
 
@@ -157,7 +158,7 @@ public class WebController {
 
         boolean isLiveUpdated;
         try {
-            isLiveUpdated = liveMatchService.getCurrent() != null;
+            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
         } catch (IOException | InterruptedException _) {
             isLiveUpdated = false;
         }
@@ -206,7 +207,7 @@ public class WebController {
 
     @GetMapping("/scoreboard")
     public String getScoreboard(Model model) {
-        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
+        List<Player> players = worldCupBraketService.getInstanceWithActualResults().getScoreboard();
         players.sort(Comparator.comparing(Player::getPoints).reversed());
         model.addAttribute("players", players);
         return "scoreboard";
@@ -219,9 +220,11 @@ public class WebController {
     ) {
         String username = authentication.getName();
 
-        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
-        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
-        List<Match> matches = worldCupBraketService.getInstance().getMatches().stream()
+        WorldCupBraket wordCupBraket = worldCupBraketService.getInstanceWithActualResults();
+
+        Map<Match, Prediction> predictions = wordCupBraket.getPlayer(username).getPredictions();
+        Map<Match, Result> results = wordCupBraket.getResults();
+        List<Match> matches = wordCupBraket.getMatches().stream()
                 .filter(Match::hasStarted).toList();
 
         List<Match> sortedMatches = new ArrayList<>(matches);
@@ -230,7 +233,7 @@ public class WebController {
 
         boolean isLiveUpdated;
         try {
-            isLiveUpdated = liveMatchService.getCurrent() != null;
+            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
         } catch (IOException | InterruptedException _) {
             isLiveUpdated = false;
         }
@@ -278,7 +281,7 @@ public class WebController {
     @GetMapping("/scoreboard.png")
     public ResponseEntity<byte[]> saveResults() throws IOException {
 
-        List<Player> players = worldCupBraketService.getInstance().getPlayers();
+        List<Player> players = worldCupBraketService.getInstanceWithActualResults().getPlayers();
 
         BufferedImage image = GraphService.createPlayersScoreBoardGraph(players);
 

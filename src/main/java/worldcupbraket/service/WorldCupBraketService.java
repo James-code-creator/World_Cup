@@ -18,6 +18,10 @@ public class WorldCupBraketService {
 
     WorldCupBraket worldCupBraket;
 
+    private volatile long cacheTime;
+
+    private static final long CACHE_MS = 120_000;
+
     public WorldCupBraketService(
             MatchRepository matchRepository,
             UserRepository userRepository,
@@ -43,8 +47,13 @@ public class WorldCupBraketService {
         worldCupBraket = new WorldCupBraket();
         this.addAllPlayers();
         this.addAllPredictions();
-        this.downloadLatestMatchResults();
         this.addAllMatchResults();
+        return worldCupBraket;
+    }
+
+    public WorldCupBraket getInstanceWithActualResults() {
+        worldCupBraket = this.getInstance();
+        this.downloadLatestMatchResults();
         this.updateLiveMatch();
         return worldCupBraket;
     }
