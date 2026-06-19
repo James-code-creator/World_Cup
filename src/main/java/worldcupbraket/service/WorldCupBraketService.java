@@ -7,6 +7,7 @@ import worldcupbraket.domain.livematch.LiveMatch;
 import worldcupbraket.model.*;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 @Service
 public class WorldCupBraketService {
@@ -17,10 +18,6 @@ public class WorldCupBraketService {
     LiveMatchService liveMatchService;
 
     WorldCupBraket worldCupBraket;
-
-    private volatile long cacheTime;
-
-    private static final long CACHE_MS = 120_000;
 
     public WorldCupBraketService(
             MatchRepository matchRepository,
@@ -47,13 +44,13 @@ public class WorldCupBraketService {
         worldCupBraket = new WorldCupBraket();
         this.addAllPlayers();
         this.addAllPredictions();
+        this.downloadLatestMatchResults();
         this.addAllMatchResults();
         return worldCupBraket;
     }
 
     public WorldCupBraket getInstanceWithActualResults() {
         worldCupBraket = this.getInstance();
-        this.downloadLatestMatchResults();
         this.updateLiveMatch();
         return worldCupBraket;
     }
@@ -108,7 +105,7 @@ public class WorldCupBraketService {
     }
 
     @Transactional
-    public WorldCupBraket addResult(
+    public void addResult(
             String date,
             String time,
             String team1,
@@ -143,7 +140,6 @@ public class WorldCupBraketService {
             resultModel.score2 = score2;
         }
         matchResultRepository.saveAndFlush(resultModel);
-        return worldCupBraket;
     }
 
     private void addAllPlayers(){
@@ -219,9 +215,11 @@ public class WorldCupBraketService {
         try {
             LiveMatch liveMatch = liveMatchService.getCurrentOrCached();
             if (liveMatch != null) {
-                Match latest = worldCupBraket.getMatches().stream().filter(
-                        Match::hasStarted
-                ).toList().getLast();
+                Match latest = worldCupBraket.getMatches().stream()
+                        .filter(Match::hasStarted)
+                        .sorted(Comparator.comparing(Match::getStartTime))
+                        .toList()
+                        .getLast();
                 Result liveResult  = new Result(
                     latest,
                     liveMatch.competitor1().results().main(),

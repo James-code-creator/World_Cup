@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static worldcupbraket.service.PredictionStatsCalculatorService.calculateOutcome;
 
@@ -224,12 +225,13 @@ public class WebController {
 
         Map<Match, Prediction> predictions = wordCupBraket.getPlayer(username).getPredictions();
         Map<Match, Result> results = wordCupBraket.getResults();
-        List<Match> matches = wordCupBraket.getMatches().stream()
-                .filter(Match::hasStarted).toList();
-
-        List<Match> sortedMatches = new ArrayList<>(matches);
-        sortedMatches.sort(Comparator.comparing(Match::getStartTime));
-        sortedMatches = sortedMatches.reversed();
+        List<Match> matches = wordCupBraket
+                .getMatches()
+                .stream()
+                .filter(Match::hasStarted)
+                .sorted(Comparator.comparing(Match::getStartTime))
+                .collect(Collectors.toList())
+                .reversed();
 
         boolean isLiveUpdated;
         try {
@@ -241,7 +243,7 @@ public class WebController {
 
         model.addAttribute("isLiveUpdated", isLiveUpdated);
         model.addAttribute("isAdmin", userService.isAdmin(username));
-        model.addAttribute("matches", sortedMatches);
+        model.addAttribute("matches", matches);
         model.addAttribute("results", results);
         model.addAttribute("predictions", predictions);
         return "results";
@@ -259,7 +261,7 @@ public class WebController {
             Authentication authentication
     ) {
 
-        WorldCupBraket braket = worldCupBraketService.addResult(
+        worldCupBraketService.addResult(
                 date,
                 time,
                 team1,
@@ -268,12 +270,33 @@ public class WebController {
                 score2
         );
 
-        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
-        List<Match> matches = braket.getMatches();
+        WorldCupBraket braket = worldCupBraketService.getInstanceWithActualResults();
+
+        Map<Match, Result> results = braket.getResults();
+        List<Match> matches = braket
+                .getMatches()
+                .stream()
+                .filter(Match::hasStarted)
+                .sorted(Comparator.comparing(Match::getStartTime))
+                .collect(Collectors.toList())
+                .reversed();
         String username = authentication.getName();
+
+        boolean isLiveUpdated;
+        try {
+            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
+        } catch (IOException | InterruptedException _) {
+            isLiveUpdated = false;
+        }
+
+        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
+
+
+        model.addAttribute("isLiveUpdated", isLiveUpdated);
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
+        model.addAttribute("predictions", predictions);
 
         return "results";
     }
