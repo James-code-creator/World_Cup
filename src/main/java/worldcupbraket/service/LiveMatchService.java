@@ -17,11 +17,14 @@ import java.util.Objects;
 @Service
 public class LiveMatchService {
     public static String footballEventId = "5193";
+    HttpClient client = HttpClient.newHttpClient();
+    private volatile LiveMatch cachedMatch;
+    private volatile long cacheTime;
+
+    private static final long CACHE_DURATION_MS = 120_000; // 2min
 
     public List<LiveMatch> get() throws IOException, InterruptedException {
         String url = "https://sport.api.swisstxt.ch/v1/live_events?lang=de";
-
-        HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -53,6 +56,28 @@ public class LiveMatchService {
         return allFootball.stream().filter(
             live -> Objects.equals(live.state(), "Live")
         ).findFirst().orElse(null);
+    }
+
+    public LiveMatch getCurrentOrCached() throws IOException, InterruptedException {
+        long now = System.currentTimeMillis();
+
+        if (cachedMatch != null && now - cacheTime < CACHE_DURATION_MS) {
+            return cachedMatch;
+        }
+
+        synchronized (this) {
+            if (cachedMatch != null &&
+                    now - cacheTime < CACHE_DURATION_MS) {
+                return cachedMatch;
+            }
+
+            LiveMatch matches = getCurrent();
+
+            cachedMatch = matches;
+            cacheTime = now;
+
+            return matches;
+        }
     }
 
 }

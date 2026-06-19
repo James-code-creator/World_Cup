@@ -208,7 +208,7 @@ public class WorldCupBraketService {
 
     private void updateLiveMatch() {
         try {
-            LiveMatch liveMatch = liveMatchService.getCurrent();
+            LiveMatch liveMatch = liveMatchService.getCurrentOrCached();
             if (liveMatch != null) {
                 Match latest = worldCupBraket.getMatches().stream().filter(
                         Match::hasStarted
