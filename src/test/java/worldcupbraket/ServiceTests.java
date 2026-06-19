@@ -96,7 +96,7 @@ public class ServiceTests {
                 anyString()
         )).thenReturn(null);
         when(matchResultRepository.findAll()).thenReturn(List.of());
-        when(liveMatchService.getCurrent()).thenReturn(liveMatch);
+        when(liveMatchService.getCurrentOrCached()).thenReturn(liveMatch);
 
 
         WorldCupBraketService service = new WorldCupBraketService(
