@@ -41,4 +41,15 @@ public record Match(
                 .toOffsetDateTime()
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
+
+    public ZonedDateTime getStartTime() {
+        String[] parts = time.split(" ");
+        ZoneId zone = ZoneId.of(parts[1]);
+
+        return ZonedDateTime.of(
+                LocalDate.parse(date),
+                LocalTime.parse(parts[0]),
+                zone
+        );
+    }
 }

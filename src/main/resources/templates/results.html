@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${nameOfApplication}">Matches</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="World Cup">
+  <link rel="apple-touch-icon" href="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 </head>
@@ -25,6 +31,9 @@
         <div class="sm:ml-6 sm:flex sm:space-x-8">
           <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
         </div>
+        <div class="sm:ml-6 sm:flex sm:space-x-8">
+          <button id="install" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Install</button>
+        </div>
       </div>
     </div>
   </div>
@@ -36,11 +45,18 @@
   <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
       <div class="px-4 py-5 sm:p-6">
-        <div th:if="${match.hasStarted() and result == null}"
+        <div  th:if="${isLiveUpdated}" class="relative col-span-12 bg-red-100 text-black text-center py-2 font-semibold rounded-md">
+          <div>Live Updated</div>
+          <span class="absolute top-2 right-2 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+          </span>
+        </div>
+        <div th:if="${match.hasStarted() and (result == null || isLiveUpdated)}"
              class="bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
           HAS STARTED
         </div>
-        <div th:if="${match.hasStarted() and result != null}"
+        <div th:if="${match.hasStarted() and (result != null and !isLiveUpdated)}"
              class="bg-green-500 text-white text-center py-2 font-semibold rounded-md">
           COMPLETED
         </div>
@@ -123,6 +139,45 @@
                 }
             });
         });
+    });
+</script>
+
+<script>
+    let installPrompt = null;
+    const installButton = document.querySelector("#install");
+
+    if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+    ) {
+        installButton.hidden = true;
+    }
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        installPrompt = event;
+        installButton.hidden = false;
+    });
+
+    window.addEventListener("appinstalled", () => {
+        installButton.hidden = true;
+        installPrompt = null;
+    });
+
+    installButton.addEventListener("click", async () => {
+        if (!installPrompt) {
+            return;
+        }
+
+        installPrompt.prompt();
+
+        const choice = await installPrompt.userChoice;
+
+        if (choice.outcome === "accepted") {
+            installButton.hidden = true;
+        }
+
+        installPrompt = null;
     });
 </script>
 

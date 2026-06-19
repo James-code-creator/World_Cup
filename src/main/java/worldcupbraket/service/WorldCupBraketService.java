@@ -3,7 +3,10 @@ package worldcupbraket.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import worldcupbraket.domain.*;
+import worldcupbraket.domain.livematch.LiveMatch;
 import worldcupbraket.model.*;
+
+import java.io.IOException;
 
 @Service
 public class WorldCupBraketService {
@@ -11,6 +14,7 @@ public class WorldCupBraketService {
     UserRepository userRepository;
     PredictionRepository predictionRepository;
     MatchResultRepository matchResultRepository;
+    LiveMatchService liveMatchService;
 
     WorldCupBraket worldCupBraket;
 
@@ -18,26 +22,31 @@ public class WorldCupBraketService {
             MatchRepository matchRepository,
             UserRepository userRepository,
             PredictionRepository predictionRepository,
-            MatchResultRepository matchResultRepository
+            MatchResultRepository matchResultRepository,
+            LiveMatchService liveMatchService
     ){
         this.matchRepository = matchRepository;
         this.userRepository = userRepository;
         this.predictionRepository = predictionRepository;
         this.matchResultRepository = matchResultRepository;
+        this.liveMatchService = liveMatchService;
 
         worldCupBraket = new WorldCupBraket();
         this.addAllPlayers();
         this.addAllPredictions();
         this.downloadLatestMatchResults();
         this.addAllMatchResults();
+        this.updateLiveMatch();
     }
 
     public WorldCupBraket getInstance() {
         worldCupBraket = new WorldCupBraket();
         this.addAllPlayers();
         this.addAllPredictions();
+        this.downloadLatestMatchResults();
         this.addAllMatchResults();
-        return  worldCupBraket;
+        this.updateLiveMatch();
+        return worldCupBraket;
     }
 
     @Transactional
@@ -195,6 +204,23 @@ public class WorldCupBraketService {
                 matchResultRepository.save(resultModel);
             }
         });
+    }
+
+    private void updateLiveMatch() {
+        try {
+            LiveMatch liveMatch = liveMatchService.getCurrent();
+            if (liveMatch != null) {
+                Match latest = worldCupBraket.getMatches().stream().filter(
+                        Match::hasStarted
+                ).toList().getLast();
+                Result liveResult  = new Result(
+                    latest,
+                    liveMatch.competitor1().results().main(),
+                    liveMatch.competitor2().results().main()
+                );
+                worldCupBraket.recordMatchResult(liveResult);
+            }
+        } catch (InterruptedException | IOException _) {}
     }
 
     private Match getMatchFrom(MatchModel fromModel) {

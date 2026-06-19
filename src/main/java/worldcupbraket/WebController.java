@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import worldcupbraket.domain.*;
 import worldcupbraket.service.GraphService;
+import worldcupbraket.service.LiveMatchService;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
 
@@ -42,14 +43,17 @@ public class WebController {
 
     private final WorldCupBraketService worldCupBraketService;
 
+    private final LiveMatchService liveMatchService;
+
     public WebController(
             UserService userService,
             RememberMeServices rememberMeServices,
-            WorldCupBraketService worldCupBraketService
-    ) {
+            WorldCupBraketService worldCupBraketService,
+            LiveMatchService liveMatchService) {
         this.userService = userService;
         this.rememberMeServices = rememberMeServices;
         this.worldCupBraketService = worldCupBraketService;
+        this.liveMatchService = liveMatchService;
     }
 
     @GetMapping("/")
@@ -150,8 +154,14 @@ public class WebController {
         allPredictions.forEach((match, pred) ->
                 predictionStats.put(match, calculateOutcome(pred)));
 
-        model.addAttribute("predictionStats", predictionStats);
+        boolean isLiveUpdated;
+        try {
+            isLiveUpdated = liveMatchService.getCurrent() != null;
+        } catch (IOException | InterruptedException _) {
+            isLiveUpdated = false;
+        }
 
+        model.addAttribute("isLiveUpdated", isLiveUpdated);
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
         model.addAttribute("predictionStats", predictionStats);
@@ -212,6 +222,15 @@ public class WebController {
         Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
         List<Match> matches = worldCupBraketService.getInstance().getMatches().stream()
                 .filter(Match::hasStarted).toList().reversed();
+
+        boolean isLiveUpdated;
+        try {
+            isLiveUpdated = liveMatchService.getCurrent() != null;
+        } catch (IOException | InterruptedException _) {
+            isLiveUpdated = false;
+        }
+
+        model.addAttribute("isLiveUpdated", isLiveUpdated);
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);

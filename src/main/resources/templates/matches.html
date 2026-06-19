@@ -51,6 +51,16 @@
         <input name="date" th:value="${match.date()}" class="hidden">
         <input name="time" th:value="${match.time()}" class="hidden">
 
+
+        <div  th:if="${isLiveUpdated}" class="relative col-span-12 bg-red-100 text-black text-center py-2 font-semibold rounded-md">
+          <div>Live Updated</div>
+
+          <span class="absolute top-2 right-2 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+          </span>
+        </div>
+
         <div th:if="${match.hasStarted() and result == null}"
              class="col-span-12 bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
           HAS STARTED
@@ -186,10 +196,22 @@
     let installPrompt = null;
     const installButton = document.querySelector("#install");
 
+    if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+    ) {
+        installButton.hidden = true;
+    }
+
     window.addEventListener("beforeinstallprompt", (event) => {
         event.preventDefault();
         installPrompt = event;
         installButton.hidden = false;
+    });
+
+    window.addEventListener("appinstalled", () => {
+        installButton.hidden = true;
+        installPrompt = null;
     });
 
     installButton.addEventListener("click", async () => {
@@ -201,10 +223,11 @@
 
         const choice = await installPrompt.userChoice;
 
-        console.log("Install result:", choice.outcome);
+        if (choice.outcome === "accepted") {
+            installButton.hidden = true;
+        }
 
         installPrompt = null;
-        installButton.hidden = true;
     });
 </script>
 

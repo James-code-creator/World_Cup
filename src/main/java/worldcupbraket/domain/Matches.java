@@ -61,6 +61,6 @@ public record Matches(
     }
 
     private void sortMatches() {
-        matches.sort(Comparator.comparing(Match::date));
+        matches.sort(Comparator.comparing(Match::getStartTime));
     }
 }
