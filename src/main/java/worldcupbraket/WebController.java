@@ -190,14 +190,6 @@ public class WebController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/scoreboard")
-    public String getScoreboard(Model model) {
-        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
-        players.sort(Comparator.comparing(Player::getPoints).reversed());
-        model.addAttribute("players", players);
-        return "scoreboard";
-    }
-
     @GetMapping("/results")
     public String getResults(
             Authentication authentication,
@@ -268,6 +260,15 @@ public class WebController {
         model.addAttribute("predictions", predictions);
 
         return "results";
+    }
+
+    @GetMapping("/scoreboard")
+    public String getScoreboard(Model model) {
+        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
+        players.sort(Comparator.comparing(Player::getPoints).reversed());
+        model.addAttribute("players", players);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
+        return "scoreboard";
     }
 
     @GetMapping("/scoreboard.png")
