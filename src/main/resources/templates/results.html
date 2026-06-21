@@ -52,7 +52,7 @@
             <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
           </span>
         </div>
-        <div th:if="${match.hasStarted() and result != null and stat.index != 0 or !isLiveUpdated}"
+        <div th:if="${match.hasStarted() and result != null and (stat.index != 0 or !isLiveUpdated)}"
              class="bg-green-500 text-white text-center py-2 font-semibold rounded-md">
           COMPLETED
         </div>

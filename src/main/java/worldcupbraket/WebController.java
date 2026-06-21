@@ -147,8 +147,9 @@ public class WebController {
                 .toList().getLast();
 
         List<Match> matches = new ArrayList<>();
-
-        matches.add(inProgress);
+        if (liveMatchService.hasLiveMatch()) {
+            matches.add(inProgress);
+        }
         matches.addAll(notStarted);
         matches.sort(Comparator.comparing(Match::getStartTime));
 
@@ -166,19 +167,18 @@ public class WebController {
     }
 
     @PostMapping("/matches")
-    public String savePredictions(
+    public ResponseEntity<Object> savePredictions(
             @RequestParam String team1,
             @RequestParam String team2,
             @RequestParam String date,
             @RequestParam String time,
             @RequestParam int score1,
             @RequestParam int score2,
-            Authentication authentication,
-            Model model
+            Authentication authentication
     ) {
         String username = authentication.getName();
 
-        WorldCupBraket braket = worldCupBraketService.addPrediction(
+        worldCupBraketService.addPrediction(
                 username,
                 date,
                 time,
@@ -187,16 +187,7 @@ public class WebController {
                 score1,
                 score2
         );
-
-        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
-        List<Match> matches = braket.getMatches();
-        Map<Match, Result> results = worldCupBraketService.getInstance().getResults();
-
-        model.addAttribute("matches", matches);
-        model.addAttribute("predictions", predictions);
-        model.addAttribute("results", results);
-
-        return "matches";
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/scoreboard")
