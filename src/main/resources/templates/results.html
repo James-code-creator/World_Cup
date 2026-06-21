@@ -57,12 +57,14 @@
           COMPLETED
         </div>
         <div role="list" class="divide-y divide-gray-200">
-          <div class="py-4 grid grid-cols-6 sm:gap-4">
-            <div class="sm:text-2xl col-span-2" th:text="${match.round()}"></div>
-            <div class="m-auto text-sm" th:text="${match.date}"></div>
-            <div class="m-auto text-sm" th:text="${match.time}"></div>
-            <div class="m-auto text-sm" th:text="${match.group}"></div>
-            <div class="m-auto text-sm" th:text="${match.ground}"></div>
+
+          <div class="flex flex-col gap-4 p-4">
+            <div class="m-auto"
+                 th:text="${match.ground()}">
+            </div>
+            <div class="text-2xl m-auto"
+                 th:text="${match.group()} + ' - ' + ${match.round()}">
+            </div>
           </div>
 
           <div class="py-4 grid grid-cols-3 text-xl">
