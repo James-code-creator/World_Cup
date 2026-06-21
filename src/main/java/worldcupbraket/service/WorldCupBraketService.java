@@ -6,6 +6,7 @@ import worldcupbraket.domain.*;
 import worldcupbraket.model.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorldCupBraketService {
@@ -55,7 +56,7 @@ public class WorldCupBraketService {
     }
 
     @Transactional
-    public WorldCupBraket addPrediction(
+    public void addPrediction(
         String username,
         String date,
         String time,
@@ -82,24 +83,36 @@ public class WorldCupBraketService {
 
         Match matchDomain = getMatchFrom(matchModel);
         if (matchDomain != null && matchDomain.hasStarted()) {
-            return worldCupBraket;
+            return;
         }
 
         MatchResultModel resultModel = matchResultRepository.findFirstByMatch(matchModel);
 
         if (resultModel != null) {
-            return worldCupBraket;
+            return;
         }
 
-        PredictionModel predictionModel = new PredictionModel(
-            matchModel,
-            score1,
-            score2
-        );
-        user.addPrediction(predictionModel);
-        userRepository.saveAndFlush(user);
-        predictionRepository.saveAndFlush(predictionModel);
-        return worldCupBraket;
+        Optional<PredictionModel> existing =
+                predictionRepository.findFirstByUser_IdAndMatch_IdOrderByIdDesc(
+                        user.getId(),
+                        matchModel.getId()
+                ).stream().findFirst();
+
+        PredictionModel prediction;
+
+        if (existing.isPresent()) {
+            prediction = existing.get();
+            prediction.score1 = score1;
+            prediction.score2 = score2;
+        } else {
+            prediction = new PredictionModel(
+                    matchModel,
+                    score1,
+                    score2
+            );
+            prediction.setUser(user);
+            predictionRepository.save(prediction);
+        }
     }
 
     @Transactional
