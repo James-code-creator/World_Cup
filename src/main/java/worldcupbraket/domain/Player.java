@@ -34,6 +34,7 @@ public class Player {
                     : pointProgression.getLast() - pointProgression.get(pointProgression.size() - 2);
         } else {
             pointProgression.add(points);
+            lastPointChange = 0;
         }
     }
 
