@@ -157,14 +157,7 @@ public class WebController {
         allPredictions.forEach((match, pred) ->
                 predictionStats.put(match, calculateOutcome(pred)));
 
-        boolean isLiveUpdated;
-        try {
-            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
-        } catch (IOException | InterruptedException _) {
-            isLiveUpdated = false;
-        }
-
-        model.addAttribute("isLiveUpdated", isLiveUpdated);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
         model.addAttribute("matches", matches);
         model.addAttribute("predictions", predictions);
         model.addAttribute("predictionStats", predictionStats);
@@ -208,7 +201,7 @@ public class WebController {
 
     @GetMapping("/scoreboard")
     public String getScoreboard(Model model) {
-        List<Player> players = worldCupBraketService.getInstanceWithActualResults().getScoreboard();
+        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
         players.sort(Comparator.comparing(Player::getPoints).reversed());
         model.addAttribute("players", players);
         return "scoreboard";
@@ -221,7 +214,7 @@ public class WebController {
     ) {
         String username = authentication.getName();
 
-        WorldCupBraket wordCupBraket = worldCupBraketService.getInstanceWithActualResults();
+        WorldCupBraket wordCupBraket = worldCupBraketService.getInstance();
 
         Map<Match, Prediction> predictions = wordCupBraket.getPlayer(username).getPredictions();
         Map<Match, Result> results = wordCupBraket.getResults();
@@ -233,15 +226,7 @@ public class WebController {
                 .collect(Collectors.toList())
                 .reversed();
 
-        boolean isLiveUpdated;
-        try {
-            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
-        } catch (IOException | InterruptedException _) {
-            isLiveUpdated = false;
-        }
-
-
-        model.addAttribute("isLiveUpdated", isLiveUpdated);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
@@ -270,7 +255,7 @@ public class WebController {
                 score2
         );
 
-        WorldCupBraket braket = worldCupBraketService.getInstanceWithActualResults();
+        WorldCupBraket braket = worldCupBraketService.getInstance();
 
         Map<Match, Result> results = braket.getResults();
         List<Match> matches = braket
@@ -282,17 +267,10 @@ public class WebController {
                 .reversed();
         String username = authentication.getName();
 
-        boolean isLiveUpdated;
-        try {
-            isLiveUpdated = liveMatchService.getCurrentOrCached() != null;
-        } catch (IOException | InterruptedException _) {
-            isLiveUpdated = false;
-        }
-
         Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
 
 
-        model.addAttribute("isLiveUpdated", isLiveUpdated);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);
@@ -304,7 +282,7 @@ public class WebController {
     @GetMapping("/scoreboard.png")
     public ResponseEntity<byte[]> saveResults() throws IOException {
 
-        List<Player> players = worldCupBraketService.getInstanceWithActualResults().getPlayers();
+        List<Player> players = worldCupBraketService.getInstance().getPlayers();
 
         BufferedImage image = GraphService.createPlayersScoreBoardGraph(players);
 

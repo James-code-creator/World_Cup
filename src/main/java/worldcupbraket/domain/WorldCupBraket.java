@@ -5,12 +5,16 @@ import java.util.*;
 public class WorldCupBraket {
     Map<String, Player> players = new HashMap<>();
     Map<Match, Result> results = new HashMap<>();
-    Matches matches = Matches.load();
+    List<Match> matches = Matches.loadLocal().matches();
 
     public WorldCupBraket() {}
 
+    public WorldCupBraket(List<Match> matches) {
+        this.matches = matches;
+    }
+
     public List<Match> getMatches() {
-        return matches.matches();
+        return matches;
     }
 
     public void addPlayer(Player player) {

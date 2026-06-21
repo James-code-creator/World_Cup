@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 import worldcupbraket.domain.*;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DomainTests {
     @Test
     void testWordCupBraket() {
-        WorldCupBraket braket = new WorldCupBraket();
+        WorldCupBraket braket = new WorldCupBraket(Matches.loadOverNet().matches());
         List<Match> matches = braket.getMatches();
         Assert.isTrue(
                 !matches.isEmpty(),
@@ -51,7 +49,7 @@ class DomainTests {
 
     @Test
     void loadTournament() {
-        Matches matches = Matches.load();
+        Matches matches = Matches.loadLocal();
         Assert.isTrue(
                 matches.name().equals("World Cup 2026"),
                 "Tournament name is not correct"
@@ -74,7 +72,7 @@ class DomainTests {
                 int points
         ) {}
 
-        Match match = Matches.load().matches().getFirst();
+        Match match = Matches.loadLocal().matches().getFirst();
 
         List<Game> games = List.of(
             new Game(new Prediction(match, 1, 0), new Result(match,1, 0), 10),

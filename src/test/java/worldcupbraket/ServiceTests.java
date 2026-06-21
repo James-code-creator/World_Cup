@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class ServiceTests {
     @Test
     void testGraphService() throws IOException {
-        List<Match> matches = Matches.load().matches();
+        List<Match> matches = Matches.loadLocal().matches();
         List<Player> players = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
@@ -96,15 +96,13 @@ public class ServiceTests {
                 anyString()
         )).thenReturn(null);
         when(matchResultRepository.findAll()).thenReturn(List.of());
-        when(liveMatchService.getCurrentOrCached()).thenReturn(liveMatch);
 
 
         WorldCupBraketService service = new WorldCupBraketService(
                 matchRepository,
                 userRepository,
                 predictionRepository,
-                matchResultRepository,
-                liveMatchService
+                matchResultRepository
         );
 
         WorldCupBraket braket = service.getInstance();

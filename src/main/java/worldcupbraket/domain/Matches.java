@@ -19,7 +19,17 @@ public record Matches(
     private static final String URL =
         "https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json";
 
-    public static Matches load() {
+    public static Matches loadLocal() {
+        ObjectMapper mapper = new ObjectMapper();
+        Matches matches = mapper.readValue(
+                getFromResources(),
+                Matches.class
+        );
+        matches.sortMatches();
+        return matches;
+    }
+
+    public static Matches loadOverNet() {
         ObjectMapper mapper = new ObjectMapper();
         Matches matches;
 
@@ -32,10 +42,7 @@ public record Matches(
             assert matches.matches.getFirst().score().ft().getFirst() == 2;
 
         } catch (IOException | InterruptedException | AssertionError e) {
-            matches = mapper.readValue(
-                    getFromResources(),
-                    Matches.class
-            );
+            matches = loadLocal();
         }
         matches.sortMatches();
         return matches;
