@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/", "/signup", "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/", "/signup", "/signup/", "/login", "/login/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/results", "/results/**").hasRole("ADMIN")
-                        .requestMatchers("/manifest.json", "/logo.svg").permitAll()
+                        .requestMatchers("/manifest.json", "/logo.png").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
