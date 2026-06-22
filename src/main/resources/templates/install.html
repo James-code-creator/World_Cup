@@ -32,7 +32,7 @@
           <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
         </div>
         <div class="sm:ml-6 sm:flex sm:space-x-8" id="install-nav">
-          <a href="/install" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Install</a>
+          <a href="/install" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Install</a>
         </div>
       </div>
     </div>
@@ -40,78 +40,50 @@
 </nav>
 
 <div class="p-4 flex flex-col gap-4 mx-auto">
-  <th:block th:each="match, stat : ${matches}">
-  <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
-  <th:block th:with="result=${results != null ? results.get(match) : null}">
-  <th:block th:with="stats=${predictionStats != null ? predictionStats.get(match) : null}">
-    <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
-      <form class="px-4 py-5 sm:p-6 grid grid-cols-12 gap-4 text-center prediction-form" action="matches" method="post">
-        <input name="team1" th:value="${match.team1()}" class="hidden">
-        <input name="team2" th:value="${match.team2()}" class="hidden">
-        <input name="date" th:value="${match.date()}" class="hidden">
-        <input name="time" th:value="${match.time()}" class="hidden">
+  <div class="sm:ml-6 sm:flex sm:space-x-8">
+    <button id="install" class="inline-flex items-center py-2 px-4 rounded text-sm font-medium text-white bg-indigo-600">Install PWA</button>
+  </div>
 
-        <div th:if="${match.hasStarted()}"
-             class="col-span-12 bg-amber-500 text-white text-center py-2 font-semibold rounded-md">
-          HAS STARTED
+  <section id="install-help" class="mx-auto max-w-2xl px-4">
+    <div class="rounded-xl bg-white p-5 shadow-sm">
+      <h1 class="text-xl font-bold text-slate-900">Install World Cup Prediction as PWA</h1>
+      <p class="mt-2 text-sm text-slate-600">
+        Add this app to your home screen for faster access.
+      </p>
+
+      <div class="mt-5 grid gap-4">
+        <div class="rounded-lg border border-slate-200 p-4">
+          <h2 class="font-semibold text-slate-900">iPhone / iPad Safari</h2>
+          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+            <li>Open this page in <strong>Safari</strong>.</li>
+            <li>Tap the <strong>Share</strong> button.</li>
+            <li>Choose <strong>Add to Home Screen</strong>.</li>
+            <li>Tap <strong>Add</strong>.</li>
+          </ol>
         </div>
 
-        <div class="col-span-12 w-full"
-             th:text="${match.ground()}">
+        <div class="rounded-lg border border-slate-200 p-4">
+          <h2 class="font-semibold text-slate-900">Android Chrome</h2>
+          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+            <li>Open this page in <strong>Chrome</strong>.</li>
+            <li>Tap the <strong>⋮</strong> menu.</li>
+            <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+            <li>Confirm with <strong>Install</strong>.</li>
+          </ol>
         </div>
 
-        <div class="text-2xl col-span-12 w-full"
-             th:text="${match.group()} + ' - ' + ${match.round()}">
+        <div class="rounded-lg border border-slate-200 p-4">
+          <h2 class="font-semibold text-slate-900">Chrome / Edge Desktop</h2>
+          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+            <li>Open this page in Chrome or Edge.</li>
+            <li>Click the install icon in the address bar.</li>
+            <li>Or click your app’s <strong>Install</strong> button.</li>
+            <li>Confirm the installation.</li>
+          </ol>
         </div>
-
-        <div class="col-span-12 w-full my-4 border-t border-gray-300"></div>
-
-        <div class="text-sm sm:text-3xl m-auto col-span-3 sm:col-span-4" th:text="${match.team1}"></div>
-        <input th:value="${prediction != null ? prediction.Score1() : ''}"
-               th:disabled="${match.hasStarted()}"
-               required
-               name="score1"
-               class="col-span-2 sm:col-span-1 ml-auto my-auto w-10 h-10 border-2 rounded
-               text-center disabled:opacity-40 disabled:cursor-not-allowed"
-               type="number"
-               min="0">
-        <div class="m-auto text-2xl col-span-2">vs</div>
-        <input th:value="${prediction != null ? prediction.Score2() : ''}"
-               th:disabled="${match.hasStarted()}"
-               required
-               name="score2"
-               class="col-span-2 sm:col-span-1 mr-auto my-auto w-10 h-10 border-2 rounded
-               text-center disabled:opacity-40 disabled:cursor-not-allowed"
-               type="number"
-               min="0">
-        <div class="text-sm sm:text-3xl m-auto col-span-3 sm:col-span-4" th:text="${match.team2}"></div>
-
-        <div class="col-span-12 w-full my-4 border-t border-gray-300"></div>
-
-        <div class="ml-auto grid col-span-5" th:if="${stats != null}">
-          <span th:text="${#numbers.formatDecimal(stats.team1WinPercentage(), 1, 1)} + '%'"></span>
-          <span>Win</span>
-        </div>
-        <div class="grid col-span-2" th:if="${stats != null}">
-          <span th:text="${#numbers.formatDecimal(stats.drawPercentage(), 1, 1)} + '%'"></span>
-          <span>Draw</span>
-        </div>
-        <div class="mr-auto grid col-span-5" th:if="${stats != null}">
-          <span th:text="${#numbers.formatDecimal(stats.team2WinPercentage(), 1, 1)} + '%'"></span>
-          <span>Win</span>
-        </div>
-
-        <div th:if="${stats != null}" class="col-span-12 w-full my-4 border-t border-gray-300"></div>
-
-        <div class="m-auto col-span-12 localtime"
-             th:text="${match.getLocalTimeIso()}">
-        </div>
-      </form>
+      </div>
     </div>
-  </th:block>
-  </th:block>
-  </th:block>
-  </th:block>
+  </section>
 </div>
 
 </body>
@@ -183,14 +155,46 @@
 </script>
 
 <script>
-    const installNav = document.querySelector("#install-nav");
+    let installPrompt = null;
+    const installButton = document.querySelector("#install");
+    const installNav = document.querySelector("#install-nav")
 
     if (
         window.matchMedia("(display-mode: standalone)").matches ||
         window.navigator.standalone === true
     ) {
+        installButton.hidden = true;
         installNav.hidden = true;
+        window.location = "/matches"
     }
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        installPrompt = event;
+        installButton.hidden = false;
+    });
+
+    window.addEventListener("appinstalled", () => {
+        installButton.hidden = true;
+        installPrompt = null;
+        window.location = "/matches"
+    });
+
+    installButton.addEventListener("click", async () => {
+        if (!installPrompt) {
+            return;
+        }
+
+        installPrompt.prompt();
+
+        const choice = await installPrompt.userChoice;
+
+        if (choice.outcome === "accepted") {
+            installButton.hidden = true;
+        }
+
+        installPrompt = null;
+    });
 </script>
 
 <style>
