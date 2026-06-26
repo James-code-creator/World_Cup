@@ -12,7 +12,6 @@ import worldcupbraket.model.MatchResultRepository;
 import worldcupbraket.model.PredictionRepository;
 import worldcupbraket.model.UserRepository;
 import worldcupbraket.service.GraphService;
-import worldcupbraket.service.LiveMatchService;
 import worldcupbraket.service.WorldCupBraketService;
 
 import java.awt.image.BufferedImage;
@@ -73,12 +72,9 @@ public class ServiceTests {
     @Mock
     MatchResultRepository matchResultRepository;
 
-    @Mock
-    LiveMatchService liveMatchService;
-
     @Test
     void updatesLiveMatchResult_WhenLiveMatchExists() throws Exception {
-        LiveMatch liveMatch = new LiveMatch(
+        LiveMatchResult liveMatchResult = new LiveMatchResult(
                 new Sport(0, "football"),
                 "Live",
                 "USA - Mexico",

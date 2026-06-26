@@ -1,6 +1,6 @@
 package worldcupbraket.domain.livematch;
 
-public record LiveMatch (
+public record LiveMatchResult(
   Sport sport,
   String state,
   String displayTitle,

@@ -14,6 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -37,26 +38,40 @@ public class LiveMatchService {
         this.refreshLiveStatus();
     }
 
-    public List<LiveMatch> get() throws IOException, InterruptedException {
+    public List<LiveMatchResult> get() throws IOException, InterruptedException {
         String body = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         ObjectMapper mapper = new ObjectMapper();
 
-        List<LiveMatch> matches = mapper.readValue(body, new TypeReference<>() {});
+        List<LiveMatchResult> matches = mapper.readValue(body, new TypeReference<>() {});
         return matches.stream()
-            .filter(liveMatch ->
+            .filter(liveMatchResult ->
                 Objects.equals(
-                    liveMatch
+                    liveMatchResult
                         .contestInfo()
                         .contestSeason()
                         .id(),
                     footballEventId
                 ) &&
-                Objects.equals(liveMatch.state(), "Live")
+                Objects.equals(liveMatchResult.state(), "Live")
             ).toList();
     }
 
     public boolean hasLiveMatch() {
         return hasLiveMatch;
+    }
+
+    public List<Match> getLiveMatches() throws IOException, InterruptedException {
+        List<Match> liveMatches = new ArrayList<>();
+        if (hasLiveMatch) {
+            List<LiveMatchResult> liveResults = get();
+            List<Match> startedMatches = getStartedMatches();
+            int count = Math.min(startedMatches.size(), liveResults.size());
+            for (int i = 0; i < count; i++) {
+                Match match = startedMatches.get(startedMatches.size() - count + i);
+                liveMatches.add(match);
+            }
+        }
+        return liveMatches;
     }
 
     @Scheduled(cron = "0 */5 18-23,0-9 * * *")
@@ -65,31 +80,55 @@ public class LiveMatchService {
     }
 
     @Scheduled(fixedDelay = 60000)
-    public void updateLiveMatch() {
+    public void updateLiveMatchResults() {
         if (!hasLiveMatch) {
             return;
         }
+
         try {
-            LiveMatch liveMatch = this.get().stream()
-                .findFirst()
-                .orElse(null);
-            if (liveMatch != null) {
-                Match latest = Matches.loadOverNet().matches().stream()
-                    .filter(Match::hasStarted)
-                    .sorted(Comparator.comparing(Match::getStartTime))
-                    .toList()
-                    .getLast();
-                worldCupBraketService.addResult(
-                    latest.date(),
-                    latest.time(),
-                    latest.team1(),
-                    latest.team2(),
-                    liveMatch.competitor1().results().main(),
-                    liveMatch.competitor2().results().main()
-                );
-            } else {
+            List<LiveMatchResult> liveResults = get();
+
+            if (liveResults.isEmpty()) {
                 hasLiveMatch = false;
+                return;
             }
-        } catch (InterruptedException | IOException _) {}
+
+            List<Match> startedMatches = getStartedMatches();
+
+            addLiveResults(startedMatches, liveResults);
+
+        } catch (InterruptedException | IOException _) {
+        }
+    }
+
+    private List<Match> getStartedMatches() throws IOException, InterruptedException {
+        return Matches.loadOverNet()
+                .matches()
+                .stream()
+                .filter(Match::hasStarted)
+                .sorted(Comparator.comparing(Match::getStartTime))
+                .toList();
+    }
+
+    private void addLiveResults(List<Match> startedMatches, List<LiveMatchResult> liveResults) {
+        int count = Math.min(startedMatches.size(), liveResults.size());
+
+        for (int i = 0; i < count; i++) {
+            Match match = startedMatches.get(startedMatches.size() - count + i);
+            LiveMatchResult liveResult = liveResults.get(i);
+
+            addLiveResult(match, liveResult);
+        }
+    }
+
+    private void addLiveResult(Match match, LiveMatchResult liveResult) {
+        worldCupBraketService.addResult(
+                match.date(),
+                match.time(),
+                match.team1(),
+                match.team2(),
+                liveResult.competitor1().results().main(),
+                liveResult.competitor2().results().main()
+        );
     }
 }

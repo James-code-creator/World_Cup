@@ -28,6 +28,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -194,7 +196,7 @@ public class WebController {
     public String getResults(
             Authentication authentication,
             Model model
-    ) {
+    ) throws IOException, InterruptedException {
         String username = authentication.getName();
 
         WorldCupBraket wordCupBraket = worldCupBraketService.getInstance();
@@ -208,8 +210,9 @@ public class WebController {
                 .sorted(Comparator.comparing(Match::getStartTime))
                 .collect(Collectors.toList())
                 .reversed();
+        List<Match> matchesWhoAreLive = liveMatchService.getLiveMatches();
 
-        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
+        model.addAttribute("matchesWhoAreLive", matchesWhoAreLive);
         model.addAttribute("isAdmin", userService.isAdmin(username));
         model.addAttribute("matches", matches);
         model.addAttribute("results", results);

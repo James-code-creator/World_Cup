@@ -43,16 +43,17 @@
   <th:block th:each="match, stat : ${matches}">
   <th:block th:with="result=${results != null ? results.get(match) : null}">
   <th:block th:with="prediction=${predictions != null ? predictions.get(match) : null}">
+  <th:block th:with="isLive=${matchesWhoAreLive.contains(match)}">
     <div class="overflow-hidden rounded-lg bg-white shadow-sm sm:w-2xl">
       <div class="px-4 py-5 sm:p-6">
-        <div th:if="${isLiveUpdated and stat.index == 0}" class="relative col-span-12 bg-red-100 text-black text-center py-2 font-semibold rounded-md">
+        <div th:if="${isLive}" class="relative col-span-12 bg-red-100 text-black text-center py-2 font-semibold rounded-md">
           <div>Live Updated</div>
           <span class="absolute top-2 right-2 flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
           </span>
         </div>
-        <div th:if="${match.hasStarted() and result != null and (stat.index != 0 or !isLiveUpdated)}"
+        <div th:if="${match.hasStarted() and result != null and !isLive}"
              class="bg-green-500 text-white text-center py-2 font-semibold rounded-md">
           COMPLETED
         </div>
@@ -118,6 +119,7 @@
         </div>
       </div>
     </div>
+  </th:block>
   </th:block>
   </th:block>
   </th:block>
