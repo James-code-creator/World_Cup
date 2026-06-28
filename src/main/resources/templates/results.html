@@ -64,7 +64,13 @@
                  th:text="${match.ground()}">
             </div>
             <div class="text-2xl m-auto"
+                 th:if="${match.group() != null}"
                  th:text="${match.group()} + ' - ' + ${match.round()}">
+            </div>
+
+            <div class="text-2xl m-auto"
+                 th:if="${match.group() == null}"
+                 th:text="'KO - ' + ${match.round()}">
             </div>
           </div>
 

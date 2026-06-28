@@ -28,27 +28,14 @@ public class WorldCupBraketService {
         this.predictionRepository = predictionRepository;
         this.matchResultRepository = matchResultRepository;
 
-        List<Match> matches = matchRepository.findAll().stream()
-            .map(matchModel -> new Match(
-                matchModel.getRound(),
-                matchModel.getDate(),
-                matchModel.getTime(),
-                matchModel.getTeam1(),
-                matchModel.getTeam2(),
-                null,
-                matchModel.getGroup(),
-                matchModel.getGround()
-        ))
-        .toList();
-
-        worldCupBraket = new WorldCupBraket(matches);
+        worldCupBraket = new WorldCupBraket(getMatches());
         this.addAllPlayers();
         this.addAllPredictions();
         this.addAllMatchResults();
     }
 
     public WorldCupBraket getInstance() {
-        worldCupBraket = new WorldCupBraket();
+        worldCupBraket = new WorldCupBraket(getMatches());
         this.addAllPlayers();
         this.addAllPredictions();
         this.addAllMatchResults();
@@ -189,6 +176,21 @@ public class WorldCupBraketService {
             );
             worldCupBraket.recordMatchResult(result);
         });
+    }
+
+    private List<Match> getMatches() {
+        return matchRepository.findAll().stream()
+                .map(matchModel -> new Match(
+                        matchModel.getRound(),
+                        matchModel.getDate(),
+                        matchModel.getTime(),
+                        matchModel.getTeam1(),
+                        matchModel.getTeam2(),
+                        null,
+                        matchModel.getGroup(),
+                        matchModel.getGround()
+                ))
+                .toList();
     }
 
     private Match getMatchFrom(MatchModel fromModel) {

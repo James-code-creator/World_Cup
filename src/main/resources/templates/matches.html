@@ -61,7 +61,13 @@
         </div>
 
         <div class="text-2xl col-span-12 w-full"
+             th:if="${match.group() != null}"
              th:text="${match.group()} + ' - ' + ${match.round()}">
+        </div>
+
+        <div class="text-2xl col-span-12 w-full"
+             th:if="${match.group() == null}"
+             th:text="'KO - ' + ${match.round()}">
         </div>
 
         <div class="col-span-12 w-full my-4 border-t border-gray-300"></div>
