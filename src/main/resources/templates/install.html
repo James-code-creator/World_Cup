@@ -10,154 +10,62 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="World Cup">
   <link rel="apple-touch-icon" href="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600">
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 </head>
 
-<body class="flex flex-col gap-4 bg-zinc-100">
-<nav class="relative bg-white shadow-sm">
-  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-    <div class="relative flex h-16 justify-between">
-      <div class="flex flex-1 gap-4 sm:gap-0 items-center justify-center sm:items-stretch sm:justify-start">
-        <div class="flex shrink-0 items-center">
-          <img src="logo.png" alt="Word Cup Prediction" class="h-12 w-auto" />
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/matches" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Matches</a>
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/results" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Results</a>
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
-        </div>
-        <div class="grid sm:ml-6 sm:flex sm:space-x-8">
-          <div class="sm:flex sm:space-x-8">
-            <a href="/points" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Points</a>
-          </div>
-          <div class="sm:flex sm:space-x-8" id="install-nav">
-            <a href="/install" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Install</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<div class="p-4 flex flex-col gap-4 mx-auto">
-  <div class="sm:ml-6 sm:flex sm:space-x-8">
-    <button id="install" class="inline-flex items-center py-2 px-4 rounded text-sm font-medium text-white bg-indigo-600">Install PWA</button>
-  </div>
-
-  <section id="install-help" class="mx-auto max-w-2xl px-4">
-    <div class="rounded-xl bg-white p-5 shadow-sm">
-      <h1 class="text-xl font-bold text-slate-900">Install World Cup Prediction as PWA</h1>
+<body class="flex flex-col gap-4 bg-zinc-100 h-screen">
+<div id="info-popup" class="mx-4 my-auto">
+  <section id="install-help" class="mx-auto max-w-2xl">
+    <div class="rounded-xl bg-white p-4 shadow-sm flex flex-col gap-4">
+      <h1 class="text-xl font-bold text-slate-900">Install as PWA</h1>
       <p class="mt-2 text-sm text-slate-600">
         Add this app to your home screen for faster access.
       </p>
 
-      <div class="mt-5 grid gap-4">
-        <div class="rounded-lg border border-slate-200 p-4">
-          <h2 class="font-semibold text-slate-900">iPhone / iPad Safari</h2>
-          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
-            <li>Open this page in <strong>Safari</strong>.</li>
-            <li>Tap the <strong>Share</strong> button.</li>
-            <li>Choose <strong>Add to Home Screen</strong>.</li>
-            <li>Tap <strong>Add</strong>.</li>
-          </ol>
-        </div>
+      <button
+        id="install"
+        class="text-center py-2 px-4 rounded text-sm font-medium text-white bg-indigo-600">
+        Install app
+      </button>
 
-        <div class="rounded-lg border border-slate-200 p-4">
-          <h2 class="font-semibold text-slate-900">Android Chrome</h2>
-          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
-            <li>Open this page in <strong>Chrome</strong>.</li>
-            <li>Tap the <strong>⋮</strong> menu.</li>
-            <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
-            <li>Confirm with <strong>Install</strong>.</li>
-          </ol>
-        </div>
+      <div class="rounded-lg border border-slate-200 p-4">
+        <h2 class="font-semibold text-slate-900">iPhone / iPad Safari</h2>
+        <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+          <li>Open this page in <strong>Safari</strong>.</li>
+          <li>Tap the <strong>Share</strong> button.</li>
+          <li>Choose <strong>Add to Home Screen</strong>.</li>
+          <li>Tap <strong>Add</strong>.</li>
+        </ol>
+      </div>
 
-        <div class="rounded-lg border border-slate-200 p-4">
-          <h2 class="font-semibold text-slate-900">Chrome / Edge Desktop</h2>
-          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
-            <li>Open this page in Chrome or Edge.</li>
-            <li>Click the install icon in the address bar.</li>
-            <li>Or click your app’s <strong>Install</strong> button.</li>
-            <li>Confirm the installation.</li>
-          </ol>
-        </div>
+      <div class="rounded-lg border border-slate-200 p-4">
+        <h2 class="font-semibold text-slate-900">Android Chrome</h2>
+        <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+          <li>Open this page in <strong>Chrome</strong>.</li>
+          <li>Tap the <strong>⋮</strong> menu.</li>
+          <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+          <li>Confirm with <strong>Install</strong>.</li>
+        </ol>
+      </div>
+
+      <div class="rounded-lg border border-slate-200 p-4">
+        <h2 class="font-semibold text-slate-900">Chrome / Edge Desktop</h2>
+        <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+          <li>Open this page in Chrome or Edge.</li>
+          <li>Click the install icon in the address bar.</li>
+          <li>Or click your app’s <strong>Install</strong> button.</li>
+          <li>Confirm the installation.</li>
+        </ol>
       </div>
     </div>
   </section>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
 </body>
 </html>
-
-<script>
-    document.querySelectorAll('.prediction-form').forEach(form => {
-        const inputs = form.querySelectorAll('input[type="number"]');
-
-        inputs.forEach(input => {
-            input.addEventListener('change', async () => {
-                if (!form.checkValidity()) return;
-
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: form.method || 'POST',
-                        body: formData
-                    });
-
-                    if (!response.ok) {
-                        console.error("Submit failed");
-                        return;
-                    }
-
-                    // optional: handle response
-                    const html = await response.text();
-                    console.log("Saved successfully");
-
-                } catch (err) {
-                    console.error("Network error:", err);
-                }
-            });
-        });
-    });
-</script>
-
-<script>
-    document.querySelectorAll('.localtime').forEach(localtime => {
-        const isoDateTime = localtime.textContent.trim();
-        const date = new Date(isoDateTime);
-
-        const formattedTime = date.toLocaleString('de-DE', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-
-        const now = new Date();
-        let diff = date - now;
-
-        if (diff < 0) {
-            localtime.textContent = `${formattedTime} (started)`;
-            return;
-        }
-
-        const totalMinutes = Math.floor(diff / (1000 * 60));
-        const days = Math.floor(totalMinutes / (60 * 24));
-        const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-        const minutes = totalMinutes % 60;
-
-        localtime.textContent =
-            `${formattedTime} (in ${days}d ${hours}h ${minutes}m)`;
-    });
-</script>
 
 <script>
     let installPrompt = null;

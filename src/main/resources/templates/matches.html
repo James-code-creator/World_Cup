@@ -15,31 +15,22 @@
 </head>
 
 <body class="flex flex-col gap-4 bg-zinc-100">
-<nav class="relative bg-white shadow-sm">
-  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-    <div class="relative flex h-16 justify-between">
-      <div class="flex flex-1 gap-4 sm:gap-0 items-center justify-center sm:items-stretch sm:justify-start">
-        <div class="flex shrink-0 items-center">
-          <img src="logo.png" alt="Word Cup Prediction" class="h-12 w-auto" />
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/matches" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Matches</a>
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/results" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Results</a>
-        </div>
-        <div class="sm:ml-6 sm:flex sm:space-x-8">
-          <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
-        </div>
-        <div class="grid sm:ml-6 sm:flex sm:space-x-8">
-          <div class="sm:flex sm:space-x-8">
-            <a href="/points" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Points</a>
-          </div>
-          <div class="sm:flex sm:space-x-8" id="install-nav">
-            <a href="/install" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Install</a>
-          </div>
-        </div>
-      </div>
+<nav class="relative bg-white shadow-sm px-4 py-2">
+  <div class="flex gap-4 items-center justify-center sm:items-stretch sm:justify-start">
+    <div class="flex shrink-0 items-center">
+      <img src="logo.png" alt="Word Cup Prediction" class="h-12 w-auto" />
+    </div>
+    <div class="my-auto sm:ml-10">
+      <a href="/matches" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Matches</a>
+    </div>
+    <div class="my-auto">
+      <a href="/results" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Results</a>
+    </div>
+    <div class="my-auto">
+      <a href="/scoreboard" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
+    </div>
+    <div class="my-auto mr-auto">
+      <a href="/rules" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Rules</a>
     </div>
   </div>
 </nav>
@@ -124,6 +115,12 @@
   </th:block>
   </th:block>
 </div>
+
+<a href="/install"
+   class="sticky bottom-0 right-0 text-center py-2 px-4 text-sm font-medium text-white bg-indigo-600"
+   id="install-nav">
+  Install as PWA
+</a>
 
 </body>
 </html>

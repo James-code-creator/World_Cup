@@ -28,8 +28,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -279,9 +277,9 @@ public class WebController {
         return "install";
     }
 
-    @GetMapping("/points")
+    @GetMapping("/rules")
     public String getPoints() {
-        return "points";
+        return "rules";
     }
 
     @GetMapping("/scoreboard.png")
