@@ -279,6 +279,11 @@ public class WebController {
         return "install";
     }
 
+    @GetMapping("/points")
+    public String getPoints() {
+        return "points";
+    }
+
     @GetMapping("/scoreboard.png")
     public ResponseEntity<byte[]> saveResults() throws IOException {
 

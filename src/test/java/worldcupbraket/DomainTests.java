@@ -72,15 +72,30 @@ class DomainTests {
                 int points
         ) {}
 
-        Match match = Matches.loadLocal().matches().getFirst();
+        List<Match> matches = Matches.loadLocal().matches();
+        Match groupMatch = matches.getFirst();
+        Match koMatch = matches.get(matches.size() - 2);
+        Match finalMatch = matches.getLast();
 
         List<Game> games = List.of(
-            new Game(new Prediction(match, 1, 0), new Result(match,1, 0), 10),
-            new Game(new Prediction(match,2, 1), new Result(match,3, 2), 8),
-            new Game(new Prediction(match,2, 1), new Result(match,2, 0), 6),
-            new Game(new Prediction(match,3, 0), new Result(match,2, 1), 5),
-            new Game(new Prediction(match,2, 1), new Result(match,0, 1), 1),
-            new Game(new Prediction(match,2, 1), new Result(match,0, 2), 0)
+            new Game(new Prediction(groupMatch, 1, 0), new Result(groupMatch,1, 0), 10),
+            new Game(new Prediction(groupMatch,2, 1), new Result(groupMatch,3, 2), 8),
+            new Game(new Prediction(groupMatch,2, 1), new Result(groupMatch,2, 0), 6),
+            new Game(new Prediction(groupMatch,3, 0), new Result(groupMatch,2, 1), 5),
+            new Game(new Prediction(groupMatch,2, 1), new Result(groupMatch,0, 1), 1),
+            new Game(new Prediction(groupMatch,2, 1), new Result(groupMatch,0, 2), 0),
+            new Game(new Prediction(koMatch, 1, 0), new Result(koMatch,1, 0), 20),
+            new Game(new Prediction(koMatch,2, 1), new Result(koMatch,3, 2), 16),
+            new Game(new Prediction(koMatch,2, 1), new Result(koMatch,2, 0), 12),
+            new Game(new Prediction(koMatch,3, 0), new Result(koMatch,2, 1), 10),
+            new Game(new Prediction(koMatch,2, 1), new Result(koMatch,0, 1), 2),
+            new Game(new Prediction(koMatch,2, 1), new Result(koMatch,0, 2), 0),
+            new Game(new Prediction(finalMatch, 1, 0), new Result(finalMatch,1, 0), 50),
+            new Game(new Prediction(finalMatch,2, 1), new Result(finalMatch,3, 2), 40),
+            new Game(new Prediction(finalMatch,2, 1), new Result(finalMatch,2, 0), 30),
+            new Game(new Prediction(finalMatch,3, 0), new Result(finalMatch,2, 1), 25),
+            new Game(new Prediction(finalMatch,2, 1), new Result(finalMatch,0, 1), 5),
+            new Game(new Prediction(finalMatch,2, 1), new Result(finalMatch,0, 2), 0)
         );
 
         Player player;

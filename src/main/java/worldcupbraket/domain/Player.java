@@ -1,10 +1,7 @@
 package worldcupbraket.domain;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
     public final String name;
@@ -64,7 +61,21 @@ public class Player {
                 == Math.abs(result.Score1() - result.Score2())
                 && correctWinner != 0
                 ? 3 : 0;
-        return correctWinner + correctScore1 + correctScore2 + correctDiff;
+
+        int points = correctWinner + correctScore1 + correctScore2 + correctDiff;
+
+        boolean isFinal = Objects.equals(prediction.Match().round(), "Final");
+        boolean isKoGame = prediction.Match().group() == null && !isFinal;
+        boolean isGroupGame = prediction.Match().group() != null;
+
+        if (isGroupGame) {
+            return points;
+        } else if (isKoGame) {
+            return points * 2;
+        } else if (isFinal) {
+            return points * 5;
+        }
+        return points;
     }
 
     private int calculatePointsForWinner(Prediction prediction, Result result) {
