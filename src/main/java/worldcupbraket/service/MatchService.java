@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import worldcupbraket.domain.Match;
 import worldcupbraket.domain.Matches;
+import worldcupbraket.domain.Score;
 import worldcupbraket.model.MatchModel;
 import worldcupbraket.model.MatchRepository;
 import worldcupbraket.model.MatchResultModel;
@@ -65,15 +66,19 @@ public class MatchService {
                 MatchResultModel resultModel =
                     matchResultRepository.findFirstByMatch(matchModel);
 
+                List<Integer> score = match.score().et() != null
+                        ? match.score().et()
+                        : match.score().ft();
+
                 if (resultModel == null) {
                     resultModel = new MatchResultModel(
                         matchModel,
-                        match.score().ft().getFirst(),
-                        match.score().ft().getLast()
+                        score.getFirst(),
+                        score.getLast()
                     );
                 } else {
-                    resultModel.score1 = match.score().ft().getFirst();
-                    resultModel.score2 = match.score().ft().getLast();
+                    resultModel.score1 = score.getFirst();
+                    resultModel.score2 = score.getLast();
                 }
                 matchResultRepository.save(resultModel);
             }

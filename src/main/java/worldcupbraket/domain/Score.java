@@ -4,5 +4,6 @@ import java.util.List;
 
 public record Score(
     List<Integer> ft,
-    List<Integer> ht
+    List<Integer> ht,
+    List<Integer> et
 ){}
