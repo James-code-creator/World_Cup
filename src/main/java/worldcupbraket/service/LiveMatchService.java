@@ -35,7 +35,7 @@ public class LiveMatchService {
 
     public LiveMatchService(WorldCupBraketService worldCupBraketService) throws IOException, InterruptedException {
         this.worldCupBraketService = worldCupBraketService;
-        this.refreshLiveStatus();
+        this.checkIfMatchHasStarted();
     }
 
     public List<LiveMatchResult> get() throws IOException, InterruptedException {
@@ -74,8 +74,8 @@ public class LiveMatchService {
         return liveMatches;
     }
 
-    @Scheduled(cron = "0 */5 18-23,0-9 * * *")
-    public void refreshLiveStatus() throws IOException, InterruptedException {
+    @Scheduled(cron = "0 0-5 18-23,0-9 * * *")
+    public void checkIfMatchHasStarted() throws IOException, InterruptedException {
         hasLiveMatch = this.get().stream().findFirst().isPresent();
     }
 
@@ -97,8 +97,7 @@ public class LiveMatchService {
 
             addLiveResults(startedMatches, liveResults);
 
-        } catch (InterruptedException | IOException _) {
-        }
+        } catch (InterruptedException | IOException _) {}
     }
 
     private List<Match> getStartedMatches() throws IOException, InterruptedException {
