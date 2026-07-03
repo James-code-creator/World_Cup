@@ -7,7 +7,6 @@ public class Player {
     public final String name;
     private final Map<Match, Prediction> predictions;
     int points;
-    int lastPointChange;
     List<Integer> pointProgression = new ArrayList<>();
 
     public Player(String name) {
@@ -26,12 +25,8 @@ public class Player {
             Prediction prediction = predictions.get(result.Match());
             points += calculatePoints(prediction, result);
             pointProgression.add(points);
-            lastPointChange = pointProgression.size() < 2
-                    ? points
-                    : pointProgression.getLast() - pointProgression.get(pointProgression.size() - 2);
         } else {
             pointProgression.add(points);
-            lastPointChange = 0;
         }
     }
 
@@ -39,13 +34,18 @@ public class Player {
         return points;
     }
 
-    public int getLastPointChange() {
-        return lastPointChange;
-    }
-
     public List<Integer> getPointProgression() {
         return pointProgression;
     }
+
+    public List<Integer> getDiffPointsScoredPerMatch() {
+        List<Integer> diffPoints = new ArrayList<>();
+        for (int i = pointProgression.size() - 1; i > 0; i--) {
+            int diff = pointProgression.get(i) - pointProgression.get(i - 1);
+            diffPoints.add(diff);
+        }
+        return diffPoints;
+    };
 
     public Map<Match, Prediction> getPredictions() {
         return predictions;
