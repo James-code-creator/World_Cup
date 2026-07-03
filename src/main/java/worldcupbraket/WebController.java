@@ -18,11 +18,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import worldcupbraket.domain.*;
+import worldcupbraket.service.CasinoService;
 import worldcupbraket.service.GraphService;
 import worldcupbraket.service.LiveMatchService;
 import worldcupbraket.service.UserService;
 import worldcupbraket.service.WorldCupBraketService;
+import worldcupbraket.model.User;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -46,15 +49,19 @@ public class WebController {
 
     private final LiveMatchService liveMatchService;
 
+    private final CasinoService casinoService;
+
     public WebController(
             UserService userService,
             RememberMeServices rememberMeServices,
             WorldCupBraketService worldCupBraketService,
-            LiveMatchService liveMatchService) {
+            LiveMatchService liveMatchService,
+            CasinoService casinoService) {
         this.userService = userService;
         this.rememberMeServices = rememberMeServices;
         this.worldCupBraketService = worldCupBraketService;
         this.liveMatchService = liveMatchService;
+        this.casinoService = casinoService;
     }
 
     @GetMapping("/")
@@ -244,10 +251,37 @@ public class WebController {
     @GetMapping("/scoreboard")
     public String getScoreboard(Model model) {
         List<Player> players = worldCupBraketService.getInstance().getScoreboard();
-        players.sort(Comparator.comparing(Player::getPoints).reversed());
+        players.sort(Comparator.comparing(Player::getTotalPoints).reversed());
         model.addAttribute("players", players);
         model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
         return "scoreboard";
+    }
+
+    @GetMapping("/casino")
+    public String getCasino(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        Player player = worldCupBraketService.getInstance().getPlayer(username);
+        User user = userService.getUserByUsername(username);
+
+        model.addAttribute("predictionPoints", player != null ? player.getPoints() : 0);
+        model.addAttribute("casinoBalance", user.getCasinoBalance());
+        model.addAttribute("totalPoints", casinoService.getTotalPoints(username));
+        return "casino";
+    }
+
+    @PostMapping("/casino")
+    public String playCasino(
+            @RequestParam int bet,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            CasinoSpinResult result = casinoService.spin(authentication.getName(), bet);
+            redirectAttributes.addFlashAttribute("spinResult", result);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/casino";
     }
 
     @GetMapping("/install")

@@ -7,6 +7,7 @@ public class Player {
     public final String name;
     private final Map<Match, Prediction> predictions;
     int points;
+    int casinoAdjustment;
     List<Integer> pointProgression = new ArrayList<>();
 
     public Player(String name) {
@@ -32,6 +33,18 @@ public class Player {
 
     public int getPoints() {
         return points;
+    }
+
+    public int getCasinoAdjustment() {
+        return casinoAdjustment;
+    }
+
+    public void setCasinoAdjustment(int casinoAdjustment) {
+        this.casinoAdjustment = casinoAdjustment;
+    }
+
+    public int getTotalPoints() {
+        return points + casinoAdjustment;
     }
 
     public List<Integer> getPointProgression() {

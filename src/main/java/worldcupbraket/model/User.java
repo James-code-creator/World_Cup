@@ -1,6 +1,14 @@
 package worldcupbraket.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +22,9 @@ public class User {
 
     private String name;
     private String password;
+
+    @Column(nullable = false, columnDefinition = "INTEGER NOT NULL DEFAULT 0")
+    private int casinoBalance;
 
     @OneToMany(
             mappedBy = "user",
@@ -66,5 +77,13 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public int getCasinoBalance() {
+        return casinoBalance;
+    }
+
+    public void adjustCasinoBalance(int delta) {
+        this.casinoBalance += delta;
     }
 }

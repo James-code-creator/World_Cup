@@ -47,7 +47,7 @@ public class WorldCupBraket {
 
     public List<Player> getScoreboard() {
         List<Player> list = new ArrayList<>(players.values());
-        list.sort(Comparator.comparing(Player::getPoints));
+        list.sort(Comparator.comparing(Player::getTotalPoints));
         return list;
     }
 

@@ -29,6 +29,9 @@
     <div class="my-auto">
       <a href="/scoreboard" class="inline-flex items-center border-b-2 border-indigo-600 px-1 pt-1 text-sm font-medium text-gray-900">Scoreboard</a>
     </div>
+    <div class="my-auto">
+      <a href="/casino" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Casino</a>
+    </div>
     <div class="my-auto mr-auto">
       <a href="/rules" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">Rules</a>
     </div>
@@ -75,8 +78,11 @@
                 <td th:text="${player.name}"
                     class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6">
                 </td>
-                <td th:text="${player.getPoints()} + ' pt'"
-                    class="px-3 py-4 text-sm whitespace-nowrap">
+                <td class="px-3 py-4 text-sm whitespace-nowrap">
+                  <span th:text="${player.getTotalPoints()} + ' pt'" class="font-medium"></span>
+                  <span th:if="${player.getCasinoAdjustment() != 0}"
+                        th:text="' (' + ${player.getCasinoAdjustment() >= 0 ? '+' : ''} + ${player.getCasinoAdjustment()} + ' casino)'"
+                        class="text-xs text-gray-500"></span>
                 </td>
                 <td class="flex px-3 py-4">
                   <th:block th:each="diffPoint : ${player.getDiffPointsScoredPerMatch()}">

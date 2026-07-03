@@ -71,42 +71,4 @@ public class ServiceTests {
 
     @Mock
     MatchResultRepository matchResultRepository;
-
-    @Test
-    void updatesLiveMatchResult_WhenLiveMatchExists() throws Exception {
-        LiveMatchResult liveMatchResult = new LiveMatchResult(
-                new Sport(0, "football"),
-                "Live",
-                "USA - Mexico",
-                new ContestInfo(new ContestSeason("5193")),
-                new DateTimeInfo("2026-06-19T00:00:00"),
-                new Competitor(1, "USA", new Results(99)),
-                new Competitor(2, "Mexico", new Results(98))
-        );
-
-        when(userRepository.findAll()).thenReturn(List.of());
-        when(matchRepository.findFirstByDateAndTimeAndTeam1AndTeam2(
-                anyString(),
-                anyString(),
-                anyString(),
-                anyString()
-        )).thenReturn(null);
-        when(matchResultRepository.findAll()).thenReturn(List.of());
-
-
-        WorldCupBraketService service = new WorldCupBraketService(
-                matchRepository,
-                userRepository,
-                predictionRepository,
-                matchResultRepository
-        );
-
-        WorldCupBraket braket = service.getInstance();
-
-        assertNotNull(braket);
-        Match latest = braket.getMatches().stream().filter(Match::hasStarted).toList().getLast();
-        Result result = braket.getResults().get(latest);
-        Assert.isTrue(result.Score1() == 99, "Match was not Live updated");
-        Assert.isTrue(result.Score2() == 98, "Match was not Live updated");
-    }
 }

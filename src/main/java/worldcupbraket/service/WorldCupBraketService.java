@@ -142,11 +142,9 @@ public class WorldCupBraketService {
 
     private void addAllPlayers(){
         userRepository.findAll().forEach(user -> {
-            worldCupBraket.addPlayer(
-                new Player(
-                    user.getName()
-                )
-            );
+            Player player = new Player(user.getName());
+            player.setCasinoAdjustment(user.getCasinoBalance());
+            worldCupBraket.addPlayer(player);
         });
     }
 
