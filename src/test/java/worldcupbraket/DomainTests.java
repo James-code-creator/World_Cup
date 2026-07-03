@@ -113,4 +113,37 @@ class DomainTests {
             );
         }
     }
+
+    @Test
+    void testGetDiffPointsPerMatch() {
+        List<Match> matches = Matches.loadLocal().matches();
+        Player player = new Player("John Doe");
+        Prediction firstPrediction = new Prediction(matches.getFirst(), 1, 0);
+        Prediction secondPrediction = new Prediction(matches.get(1), 0, 0);
+        player.predict(firstPrediction);
+        player.predict(secondPrediction);
+        Result firstResult = new Result(matches.getFirst(), 0, 0);
+        Result secondResult = new Result(matches.get(1), 0, 0);
+
+        List<Integer> diffs = player.getDiffPointsScoredPerMatch();
+
+        Assert.isTrue(
+                diffs.getFirst() == 0,
+                "The diff point credited was calculated wrong"
+        );
+
+        player.gradeMatch(firstResult);
+        player.gradeMatch(secondResult);
+
+        diffs = player.getDiffPointsScoredPerMatch();
+
+        Assert.isTrue(
+            diffs.getFirst() == 10,
+            "The diff point credited was calculated wrong"
+        );
+        Assert.isTrue(
+            diffs.getLast() == 1,
+            "The diff point credited was calculated wrong"
+        );
+    }
 }

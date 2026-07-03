@@ -79,12 +79,10 @@
                     class="px-3 py-4 text-sm whitespace-nowrap">
                 </td>
                 <td class="flex px-3 py-4">
-                  <th:block th:each="diffPoint : ${player.getDiffPointsScoredPerMatch().subList(
-                    T(java.lang.Math).max(0, player.getDiffPointsScoredPerMatch().size() - 3),
-                    player.getDiffPointsScoredPerMatch().size())}">
+                  <th:block th:each="diffPoint : ${player.getDiffPointsScoredPerMatch()}">
                   <span
                     th:text="'+' + ${diffPoint}"
-                    class="m-auto text-sm whitespace-nowrap text-green-700">
+                    class="mr-auto text-sm whitespace-nowrap text-green-700">
                   </span>
                   </th:block>
                 </td>

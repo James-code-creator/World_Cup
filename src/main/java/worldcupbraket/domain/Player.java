@@ -40,11 +40,18 @@ public class Player {
 
     public List<Integer> getDiffPointsScoredPerMatch() {
         List<Integer> diffPoints = new ArrayList<>();
+        if (pointProgression.size() < 2) {
+            diffPoints.add(0);
+            return diffPoints;
+        }
         for (int i = pointProgression.size() - 1; i > 0; i--) {
             int diff = pointProgression.get(i) - pointProgression.get(i - 1);
             diffPoints.add(diff);
         }
-        return diffPoints;
+        if (diffPoints.size() < 3) {
+            return diffPoints;
+        }
+        return diffPoints.subList(0, 3);
     };
 
     public Map<Match, Prediction> getPredictions() {
