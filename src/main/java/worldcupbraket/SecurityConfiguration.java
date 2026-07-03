@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/", "/signup", "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/results", "/results/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/", "/signup", "/signup/", "/login", "/login/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/results", "/results/**").hasRole("ADMIN")
                         .requestMatchers("/manifest.json", "/logo.png").permitAll()

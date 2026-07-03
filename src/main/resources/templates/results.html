@@ -141,9 +141,28 @@
         const inputs = form.querySelectorAll('input[type="number"]');
 
         inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                if (form.checkValidity()) {
-                    form.requestSubmit();
+            input.addEventListener('change', async () => {
+                if (!form.checkValidity()) return;
+
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: form.method || 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        console.error("Submit failed");
+                        return;
+                    }
+
+                    // optional: handle response
+                    const html = await response.text();
+                    console.log("Saved successfully");
+
+                } catch (err) {
+                    console.error("Network error:", err);
                 }
             });
         });

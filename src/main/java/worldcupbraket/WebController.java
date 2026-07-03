@@ -219,7 +219,7 @@ public class WebController {
     }
 
     @PostMapping("/results")
-    public String saveResults(
+    public ResponseEntity<Object> saveResults(
             @RequestParam String team1,
             @RequestParam String team2,
             @RequestParam String date,
@@ -238,29 +238,7 @@ public class WebController {
                 score1,
                 score2
         );
-
-        WorldCupBraket braket = worldCupBraketService.getInstance();
-
-        Map<Match, Result> results = braket.getResults();
-        List<Match> matches = braket
-                .getMatches()
-                .stream()
-                .filter(Match::hasStarted)
-                .sorted(Comparator.comparing(Match::getStartTime))
-                .collect(Collectors.toList())
-                .reversed();
-        String username = authentication.getName();
-
-        Map<Match, Prediction> predictions = worldCupBraketService.getInstance().getPlayer(username).getPredictions();
-
-
-        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
-        model.addAttribute("isAdmin", userService.isAdmin(username));
-        model.addAttribute("matches", matches);
-        model.addAttribute("results", results);
-        model.addAttribute("predictions", predictions);
-
-        return "results";
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/scoreboard")
