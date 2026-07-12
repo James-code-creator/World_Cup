@@ -6,7 +6,7 @@ import java.util.*;
 public class Player {
     public final String name;
     private final Map<Match, Prediction> predictions;
-    int points;
+    int points, groupPoints, koPoints, finalPoints;
     List<Integer> pointProgression = new ArrayList<>();
 
     public Player(String name) {
@@ -23,7 +23,13 @@ public class Player {
     public void gradeMatch(Result result) {
         if (predictions.containsKey(result.Match())) {
             Prediction prediction = predictions.get(result.Match());
-            points += calculatePoints(prediction, result);
+            int pointsEarned = calculatePoints(prediction, result);
+            points += pointsEarned;
+            switch (Phase.getPhase(result.Match())){
+                case GroupPhase -> groupPoints += pointsEarned;
+                case KoPhase -> koPoints += pointsEarned;
+                case Final -> finalPoints += pointsEarned;
+            }
             pointProgression.add(points);
         } else {
             pointProgression.add(points);
@@ -32,6 +38,23 @@ public class Player {
 
     public int getPoints() {
         return points;
+    }
+
+    public int getPoints(Phase phase) {
+        switch (phase) {
+            case GroupPhase -> {
+                return groupPoints;
+            }
+            case KoPhase -> {
+                return koPoints;
+            }
+            case Final -> {
+                return finalPoints;
+            }
+            default -> {
+                return points;
+            }
+        }
     }
 
     public List<Integer> getPointProgression() {

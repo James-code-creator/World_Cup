@@ -244,7 +244,34 @@ public class WebController {
     @GetMapping("/scoreboard")
     public String getScoreboard(Model model) {
         List<Player> players = worldCupBraketService.getInstance().getScoreboard();
-        players.sort(Comparator.comparing(Player::getPoints).reversed());
+        players.sort(
+            Comparator.comparingInt((Player player) -> player.getPoints()).reversed()
+        );
+        model.addAttribute("phase", null);
+        model.addAttribute("players", players);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
+        return "scoreboard";
+    }
+
+    @GetMapping("/scoreboard-group-phase")
+    public String getScoreboardGroupPhase(Model model) {
+        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
+        players.sort(
+                Comparator.comparingInt((Player player) -> player.getPoints(Phase.GroupPhase)).reversed()
+        );
+        model.addAttribute("phase", Phase.GroupPhase);
+        model.addAttribute("players", players);
+        model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
+        return "scoreboard";
+    }
+
+    @GetMapping("/scoreboard-ko-phase")
+    public String getScoreboardKoPhase(Model model) {
+        List<Player> players = worldCupBraketService.getInstance().getScoreboard();
+        players.sort(
+                Comparator.comparingInt((Player player) -> player.getPoints(Phase.KoPhase)).reversed()
+        );
+        model.addAttribute("phase", Phase.KoPhase);
         model.addAttribute("players", players);
         model.addAttribute("isLiveUpdated", liveMatchService.hasLiveMatch());
         return "scoreboard";

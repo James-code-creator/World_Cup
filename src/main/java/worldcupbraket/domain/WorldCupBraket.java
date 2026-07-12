@@ -51,6 +51,16 @@ public class WorldCupBraket {
         return list;
     }
 
+    public List<Player> getScoreboard(Phase phase) {
+        List<Player> list = new ArrayList<>(players.values());
+        list.sort(
+            Comparator.comparingInt(
+                    (Player player) -> player.getPoints(phase)
+            )
+        );
+        return list;
+    }
+
     public Map<Match, List<Prediction>> getAllPredictions() {
         Map<Match, List<Prediction>> allPredictions = new HashMap<>();
         players.forEach((_, player) -> {

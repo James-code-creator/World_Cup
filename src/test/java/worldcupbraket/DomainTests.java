@@ -5,6 +5,7 @@ import org.springframework.util.Assert;
 import worldcupbraket.domain.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -144,6 +145,42 @@ class DomainTests {
         Assert.isTrue(
             diffs.getLast() == 1,
             "The diff point credited was calculated wrong"
+        );
+    }
+
+    @Test
+    void testScoreBoard() {
+        List<Match> matches = Matches.loadLocal().matches();
+
+        List<Match> groupMatches = matches.stream().filter(match -> match.group() != null).toList();
+        List<Match> koMatches = matches.stream().filter(match ->
+            match.group() == null &&
+            !Objects.equals(match.round(), "Final")
+        ).toList();
+
+        WorldCupBraket braket = new WorldCupBraket(matches);
+
+        Player player = new Player("John");
+        braket.addPlayer(player);
+
+        for (Match match : matches) {
+            Prediction prediction = new Prediction(match, 0, 0);
+            braket.predictMatch(prediction, player);
+            braket.recordMatchResult(new Result(match, 0, 0));
+        }
+
+        List<Player> scoreboard = braket.getScoreboard(Phase.GroupPhase);
+        Assert.isTrue(
+            scoreboard.getFirst().getPoints(Phase.GroupPhase) == 10 * groupMatches.size(),
+            "Did not calculate the correct amount of points for the Group Phase"
+        );
+        Assert.isTrue(
+                scoreboard.getFirst().getPoints(Phase.KoPhase) == 20 * koMatches.size(),
+                "Did not calculate the correct amount of points for the Ko Phase"
+        );
+        Assert.isTrue(
+                scoreboard.getFirst().getPoints(Phase.Final) == 50,
+                "Did not calculate the correct amount of points for the Ko Phase"
         );
     }
 }
