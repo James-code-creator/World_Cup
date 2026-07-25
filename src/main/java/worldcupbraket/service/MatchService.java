@@ -27,7 +27,7 @@ public class MatchService {
         this.downloadLatestMatches();
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+    //@Scheduled(cron = "0 0 9 * * *")
     public void downloadLatestMatches(){
         List<Match> matches = Matches.loadOverNet().matches();
         this.matchRepository.deleteAll();
@@ -48,7 +48,7 @@ public class MatchService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    //@Scheduled(cron = "0 0 * * * *")
     public void downloadLatestMatchResults() {
         Matches matches = Matches.loadOverNet();
         matches.matches().forEach(match -> {

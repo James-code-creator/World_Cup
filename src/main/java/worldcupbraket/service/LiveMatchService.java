@@ -74,12 +74,12 @@ public class LiveMatchService {
         return liveMatches;
     }
 
-    @Scheduled(cron = "0 0-5 18-23,0-9 * * *")
+    //@Scheduled(cron = "0 0-5 18-23,0-9 * * *")
     public void checkIfMatchHasStarted() throws IOException, InterruptedException {
         hasLiveMatch = this.get().stream().findFirst().isPresent();
     }
 
-    @Scheduled(fixedDelay = 60000)
+    //@Scheduled(fixedDelay = 60000)
     public void updateLiveMatchResults() {
         if (!hasLiveMatch) {
             return;
